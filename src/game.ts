@@ -1,49 +1,50 @@
 import 'phaser';
-import Orchestre from 'orchestre-js';
+import { images, Resources } from './utils/resources';
+import Player from './objects/player';
 
-export default class Demo extends Phaser.Scene {
-  private orchestre: Orchestre;
+export default class Game extends Phaser.Scene {
+  private player: Player;
+  private camera: Phaser.Cameras.Scene2D.Camera;
 
   constructor() {
-    super('demo');
+    super('game');
   }
 
   preload() {
-    this.load.image('logo', 'assets/phaser3-logo.png');
-    this.load.image('libs', 'assets/libs.png');
-    this.load.glsl('bundle', 'assets/plasma-bundle.glsl.js');
-    this.load.glsl('stars', 'assets/starfields.glsl.js');
+    for (const image of images.keys()) {
+      this.load.image(image, images.get(image));
+    }
   }
 
   create() {
-    this.add.shader('RGB Shift Field', 0, 0, 800, 600).setOrigin(0);
+    this.camera = this.cameras.main;
 
-    this.add.shader('Plasma', 0, 412, 800, 172).setOrigin(0);
+    this.add.sprite(
+      this.camera.centerX,
+      this.camera.centerY,
+      Resources.Background
+    );
 
-    this.add.image(this.cameras.main.centerX, 300, 'libs');
+    this.player = new Player(this, this.camera.centerX, this.camera.centerY);
 
-    const logo = this.add.image(400, 70, 'logo');
+    // Debug only
+    // this.camera.startFollow(this.player.sprite);
+  }
 
-    this.orchestre = new Orchestre(120);
-    console.log('HOHOY', this.orchestre.started);
-
-    this.tweens.add({
-      targets: logo,
-      y: 350,
-      duration: 1500,
-      ease: 'Sine.inOut',
-      yoyo: true,
-      repeat: -1
-    });
+  update() {
+    this.player.update();
   }
 }
 
-const config = {
+const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
   backgroundColor: '#125555',
   width: 800,
   height: 600,
-  scene: Demo
+  scene: Game,
+  physics: {
+    default: 'arcade'
+  }
 };
 
 const game = new Phaser.Game(config);
