@@ -31,4 +31,8 @@ export default class Player {
       this.sprite.setVelocityY(SPEED);
     }
   }
+
+  public getPosition() {
+    return { x: this.sprite.x, y: this.sprite.y };
+  }
 }

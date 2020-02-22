@@ -2,7 +2,7 @@ import 'phaser';
 import CollisionManager from './collisionManager';
 import { Resources, musics } from '../utils/resources';
 
-const UNIT = 1024;
+export const UNIT = 1024;
 const FADE = 1.5;
 const MEASURE_LENGTH = 16;
 

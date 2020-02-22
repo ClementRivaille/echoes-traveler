@@ -5,11 +5,12 @@ import Path from './objects/path';
 import Player from './objects/player';
 import Walls from './objects/walls';
 import pathsConfig from './utils/pathsConfig';
-import { images, Resources } from './utils/resources';
+import { images, Resources, musics } from './utils/resources';
 import Exit from './objects/exit';
 import Orchestre from 'orchestre-js';
-import areasConfig from './utils/areasConfig';
+import { areasConfig, soundEmittersConfig } from './utils/audioConfig';
 import Area from './objects/area';
+import SoundEmitter from './objects/soundEmitter';
 
 export default class Game extends Phaser.Scene {
   private player: Player;
@@ -25,6 +26,7 @@ export default class Game extends Phaser.Scene {
   private exit: Exit;
 
   private orchestre: Orchestre;
+  private soundEmitters: SoundEmitter[];
 
   constructor() {
     super('game');
@@ -65,6 +67,21 @@ export default class Game extends Phaser.Scene {
       );
       musicLoading.push(area.load());
       return area;
+    });
+    this.soundEmitters = soundEmittersConfig.map(emitterConfig => {
+      const emitter = new SoundEmitter(
+        this,
+        this.collisionsManager,
+        this.orchestre,
+        this.player,
+        emitterConfig.x,
+        emitterConfig.y,
+        emitterConfig.range,
+        emitterConfig.sound,
+        emitterConfig.length
+      );
+      musicLoading.push(emitter.load());
+      return emitter;
     });
     await Promise.all(musicLoading);
     this.orchestre.start();
@@ -109,6 +126,7 @@ export default class Game extends Phaser.Scene {
   update() {
     this.player.update();
     this.collisionsManager.update();
+    this.soundEmitters.forEach(emitter => emitter.update());
   }
 
   private validatePath() {
