@@ -6,7 +6,9 @@ export enum Resources {
   TileValidated = 'TileValidated',
   TorchOff = 'TorchOff',
   TorchOn = 'TorchOn',
-  Wall = 'Wall'
+  Wall = 'Wall',
+  ExitClosed = 'ExitClosed',
+  ExitOpen = 'ExitOpen'
 }
 
 export const images = new Map<Resources, string>([
@@ -17,5 +19,7 @@ export const images = new Map<Resources, string>([
   [Resources.TileValidated, 'assets/sprites/tile_validated.png'],
   [Resources.TorchOff, 'assets/sprites/torch_off.png'],
   [Resources.TorchOn, 'assets/sprites/torch_on.png'],
-  [Resources.Wall, 'assets/sprites/wall.png']
+  [Resources.Wall, 'assets/sprites/wall.png'],
+  [Resources.ExitClosed, 'assets/sprites/exit_closed.png'],
+  [Resources.ExitOpen, 'assets/sprites/exit_open.png']
 ]);

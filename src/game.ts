@@ -6,6 +6,7 @@ import Player from './objects/player';
 import Walls from './objects/walls';
 import pathsConfig from './utils/pathsConfig';
 import { images, Resources } from './utils/resources';
+import Exit from './objects/exit';
 
 export default class Game extends Phaser.Scene {
   private player: Player;
@@ -17,6 +18,8 @@ export default class Game extends Phaser.Scene {
   private torchs: Phaser.GameObjects.Sprite[] = [];
 
   private bordersCollider: Phaser.Physics.Arcade.Collider;
+
+  private exit: Exit;
 
   constructor() {
     super('game');
@@ -73,6 +76,8 @@ export default class Game extends Phaser.Scene {
       this.player.sprite
     );
 
+    this.exit = new Exit(this, 0, -300, this.collisionsManager);
+
     this.player.sprite.setDepth(1);
   }
 
@@ -86,13 +91,16 @@ export default class Game extends Phaser.Scene {
     this.pathValidated += 1;
 
     if (this.pathValidated === this.paths.length) {
-      // Open the gate!
-      console.log('near the end of the game');
+      this.exit.open(() => this.winGame());
     }
 
     if (this.pathValidated === 1) {
       this.bordersCollider.active = false;
     }
+  }
+
+  winGame() {
+    console.log(`C'est fini les amis !`);
   }
 }
 

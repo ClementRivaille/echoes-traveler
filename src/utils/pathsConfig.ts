@@ -20,8 +20,8 @@ const pathsConfig: PahtConfig[] = [
       Directions.Up,
       Directions.Up
     ],
-    torchX: -200,
-    torchY: -50
+    torchX: -100,
+    torchY: -100
   }
 ];
 export default pathsConfig;
