@@ -7,6 +7,9 @@ import Walls from './objects/walls';
 import pathsConfig from './utils/pathsConfig';
 import { images, Resources } from './utils/resources';
 import Exit from './objects/exit';
+import Orchestre from 'orchestre-js';
+import areasConfig from './utils/areasConfig';
+import Area from './objects/area';
 
 export default class Game extends Phaser.Scene {
   private player: Player;
@@ -21,6 +24,8 @@ export default class Game extends Phaser.Scene {
 
   private exit: Exit;
 
+  private orchestre: Orchestre;
+
   constructor() {
     super('game');
   }
@@ -31,7 +36,7 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  create() {
+  async create() {
     this.camera = this.cameras.main;
     this.camera.scrollX = -this.camera.centerX;
     this.camera.scrollY = -this.camera.centerY;
@@ -45,8 +50,28 @@ export default class Game extends Phaser.Scene {
       this.player.sprite
     );
 
+    this.orchestre = new Orchestre(120);
+    const musicLoading: Promise<void>[] = [];
+    const areas = areasConfig.map(areaConfig => {
+      const area = new Area(
+        this,
+        this.orchestre,
+        this.collisionsManager,
+        areaConfig.x,
+        areaConfig.y,
+        areaConfig.width,
+        areaConfig.height,
+        areaConfig.music
+      );
+      musicLoading.push(area.load());
+      return area;
+    });
+    await Promise.all(musicLoading);
+    this.orchestre.start();
+    areas[0].activate();
+
     // Debug only
-    // this.camera.startFollow(this.player.sprite);
+    this.camera.startFollow(this.player.sprite);
 
     for (const pathConfig of pathsConfig) {
       this.paths.push(
@@ -111,7 +136,10 @@ const config: Phaser.Types.Core.GameConfig = {
   height: 800,
   scene: Game,
   physics: {
-    default: 'arcade'
+    default: 'arcade',
+    arcade: {
+      debug: true
+    }
   }
 };
 
