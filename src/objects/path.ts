@@ -26,7 +26,8 @@ export default class Path {
     x: number,
     y: number,
     directions: Directions[],
-    collisionManager: CollisionManager
+    collisionManager: CollisionManager,
+    private onValidateCallback: () => void
   ) {
     const firstTile = new Tile(
       game,
@@ -72,8 +73,7 @@ export default class Path {
       if (state === TileState.Inactive && value === this.step + 1) {
         // End path
         if (value === this.tiles.length) {
-          this.state = PathState.Validated;
-          this.tiles[this.step].setState(TileState.Validated);
+          this.validate();
         }
         // Path in validation
         else {
@@ -89,6 +89,10 @@ export default class Path {
         // Initialise validation state
         if (this.state === PathState.Inactive) {
           this.state = PathState.Validation;
+          const hintedTiles = this.tiles.filter(
+            tile => tile.getState() === TileState.Hint
+          );
+          hintedTiles.forEach(tile => tile.setState(TileState.Inactive));
         }
       }
 
@@ -144,5 +148,11 @@ export default class Path {
   private hintTile(index) {
     this.tiles.forEach(tile => tile.setState(TileState.Inactive));
     this.tiles[index].setState(TileState.Hint);
+  }
+
+  private validate() {
+    this.state = PathState.Validated;
+    this.tiles[this.step].setState(TileState.Validated);
+    this.onValidateCallback();
   }
 }

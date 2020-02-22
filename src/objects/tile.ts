@@ -2,7 +2,7 @@ import 'phaser';
 import { Resources } from '../utils/resources';
 import CollisionManager from './collisionManager';
 
-export const TILE_SIZE = 64;
+export const TILE_SIZE = 96;
 const STEP_COLOR = 'rgba(100,100,100, 1)';
 
 export enum TileState {
@@ -30,6 +30,8 @@ export default class Tile {
     private onExitCallback: (value, state) => void
   ) {
     this.sprite = game.add.sprite(x, y, Resources.TileNeutral);
+    this.sprite.displayWidth = TILE_SIZE;
+    this.sprite.displayHeight = TILE_SIZE;
     this.zone = game.add.zone(x, y, TILE_SIZE, TILE_SIZE);
     this.text = game.add.text(x, y, `${value}`, {
       fontSize: 40,
