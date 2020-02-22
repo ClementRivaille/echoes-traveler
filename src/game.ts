@@ -11,6 +11,7 @@ import Orchestre from 'orchestre-js';
 import { areasConfig, soundEmittersConfig } from './utils/audioConfig';
 import Area from './objects/area';
 import SoundEmitter from './objects/soundEmitter';
+import Instruments from './utils/instruments';
 
 export default class Game extends Phaser.Scene {
   private player: Player;
@@ -27,6 +28,7 @@ export default class Game extends Phaser.Scene {
 
   private orchestre: Orchestre;
   private soundEmitters: SoundEmitter[];
+  private instruments: Instruments;
 
   constructor() {
     super('game');
@@ -83,9 +85,12 @@ export default class Game extends Phaser.Scene {
       musicLoading.push(emitter.load());
       return emitter;
     });
+    this.instruments = new Instruments();
+    musicLoading.push(this.instruments.load());
+
     await Promise.all(musicLoading);
     this.orchestre.start();
-    areas[0].activate();
+    // areas[0].activate();
 
     // Debug only
     this.camera.startFollow(this.player.sprite);
@@ -98,6 +103,7 @@ export default class Game extends Phaser.Scene {
           pathConfig.y,
           pathConfig.directions,
           this.collisionsManager,
+          this.instruments,
           () => this.validatePath()
         )
       );

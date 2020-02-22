@@ -1,6 +1,7 @@
 import 'phaser';
 import Tile, { TILE_SIZE, TileState } from './tile';
 import CollisionManager from './collisionManager';
+import Instruments, { InstrumentType } from '../utils/instruments';
 
 export enum Directions {
   Up,
@@ -15,6 +16,8 @@ enum PathState {
   Validated
 }
 
+const NOTES = ['C4', 'E4', 'F#4', 'G4', 'B4', 'D5', 'E5'];
+
 export default class Path {
   private tiles: Tile[];
   private state: PathState = PathState.Inactive;
@@ -27,6 +30,7 @@ export default class Path {
     y: number,
     directions: Directions[],
     collisionManager: CollisionManager,
+    private instruments: Instruments,
     private onValidateCallback: () => void
   ) {
     const firstTile = new Tile(
@@ -85,6 +89,10 @@ export default class Path {
           this.tiles[this.step - 1].setState(TileState.Validated);
         }
         this.step += 1;
+        this.instruments.play(
+          NOTES[(value - 1) % NOTES.length],
+          InstrumentType.Main
+        );
 
         // Initialise validation state
         if (this.state === PathState.Inactive) {
@@ -148,6 +156,7 @@ export default class Path {
   private hintTile(index) {
     this.tiles.forEach(tile => tile.setState(TileState.Inactive));
     this.tiles[index].setState(TileState.Hint);
+    this.instruments.play(NOTES[index % NOTES.length], InstrumentType.Second);
   }
 
   private validate() {
