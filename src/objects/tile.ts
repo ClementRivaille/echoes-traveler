@@ -7,6 +7,7 @@ const STEP_COLOR = 'rgba(100,100,100, 1)';
 
 export enum TileState {
   Inactive,
+  Hint,
   Validation,
   Validated
 }
@@ -24,7 +25,9 @@ export default class Tile {
     private value: number,
     x: number,
     y: number,
-    collisionManager: CollisionManager
+    collisionManager: CollisionManager,
+    private onEnterCallback: (value, state) => void,
+    private onExitCallback: (value, state) => void
   ) {
     this.sprite = game.add.sprite(x, y, Resources.TileNeutral);
     this.zone = game.add.zone(x, y, TILE_SIZE, TILE_SIZE);
@@ -44,35 +47,39 @@ export default class Tile {
 
   private onEnter() {
     this.steppedOn = true;
-
-    if (this.state === TileState.Inactive) {
-      this.text.setColor(STEP_COLOR);
-      this.sprite.tint = 0x100100100;
-    }
+    this.onEnterCallback(this.value, this.state);
   }
 
   private onExit() {
     this.steppedOn = false;
-
-    if (this.state === TileState.Inactive) {
-      this.text.setColor('#ffffff');
-      this.sprite.tint = 0xffffff;
-    } else {
-      this.sprite.tint = 0xffffff;
-    }
+    this.onExitCallback(this.value, this.state);
   }
 
   public setState(state: TileState) {
     this.state = state;
 
+    this.text.setColor('#ffffff');
+    this.sprite.tint = 0xffffff;
+
     if (this.state === TileState.Inactive) {
       this.sprite.setTexture(Resources.TileNeutral);
+    } else if (this.state === TileState.Hint) {
+      this.text.setColor(STEP_COLOR);
+      this.sprite.tint = 0x100100100;
     } else if (this.state === TileState.Validation) {
+      this.text.setColor(STEP_COLOR);
       this.sprite.setTexture(
         this.steppedOn ? Resources.TileValidating : Resources.TileValidated
       );
-    } else {
+    } else if (this.state === TileState.Validated) {
       this.sprite.setTexture(Resources.TileValidated);
     }
+  }
+
+  public isSteppedOn() {
+    return this.steppedOn;
+  }
+  public getState() {
+    return this.state;
   }
 }

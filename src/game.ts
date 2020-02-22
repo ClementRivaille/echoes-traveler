@@ -3,13 +3,14 @@ import { images, Resources } from './utils/resources';
 import Player from './objects/player';
 import Tile from './objects/tile';
 import CollisionManager from './objects/collisionManager';
+import Path, { Directions } from './objects/path';
 
 export default class Game extends Phaser.Scene {
   private player: Player;
   private camera: Phaser.Cameras.Scene2D.Camera;
   private collisionsManager: CollisionManager;
 
-  private tile: Tile;
+  private paths: Path[] = [];
 
   constructor() {
     super('game');
@@ -38,9 +39,17 @@ export default class Game extends Phaser.Scene {
     );
 
     // Debug only
-    this.camera.startFollow(this.player.sprite);
+    // this.camera.startFollow(this.player.sprite);
 
-    this.tile = new Tile(this, 0, 100, 100, this.collisionsManager);
+    this.paths.push(
+      new Path(
+        this,
+        100,
+        100,
+        [Directions.Right, Directions.Down, Directions.Down, Directions.Right],
+        this.collisionsManager
+      )
+    );
 
     this.player.sprite.setDepth(1);
   }
