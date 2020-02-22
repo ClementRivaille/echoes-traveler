@@ -1,11 +1,11 @@
 import 'phaser';
-import { images, Resources } from './utils/resources';
-import Player from './objects/player';
-import Tile from './objects/tile';
+import Borders from './objects/Borders';
 import CollisionManager from './objects/collisionManager';
-import Path, { Directions } from './objects/path';
-import pathsConfig from './utils/pathsConfig';
+import Path from './objects/path';
+import Player from './objects/player';
 import Walls from './objects/walls';
+import pathsConfig from './utils/pathsConfig';
+import { images, Resources } from './utils/resources';
 
 export default class Game extends Phaser.Scene {
   private player: Player;
@@ -15,6 +15,8 @@ export default class Game extends Phaser.Scene {
   private paths: Path[] = [];
   private pathValidated = 0;
   private torchs: Phaser.GameObjects.Sprite[] = [];
+
+  private bordersCollider: Phaser.Physics.Arcade.Collider;
 
   constructor() {
     super('game');
@@ -65,6 +67,11 @@ export default class Game extends Phaser.Scene {
 
     const walls = new Walls(this);
     this.physics.add.collider(walls.group, this.player.sprite);
+    const borders = new Borders(this, this.camera.width, this.camera.height);
+    this.bordersCollider = this.physics.add.collider(
+      borders.group,
+      this.player.sprite
+    );
 
     this.player.sprite.setDepth(1);
   }
@@ -81,6 +88,10 @@ export default class Game extends Phaser.Scene {
     if (this.pathValidated === this.paths.length) {
       // Open the gate!
       console.log('near the end of the game');
+    }
+
+    if (this.pathValidated === 1) {
+      this.bordersCollider.active = false;
     }
   }
 }
