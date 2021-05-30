@@ -1,9 +1,8 @@
-import 'tone';
-declare var Tone: any;
+import { Reverb, Sampler } from 'tone';
 
 export enum InstrumentType {
   Main = 'main',
-  Second = 'second'
+  Second = 'second',
 }
 
 export default class Instruments {
@@ -15,21 +14,21 @@ export default class Instruments {
     this.instruments = {};
 
     promises.push(
-      new Promise(resolve => {
-        const rhodesReverb = new Tone.Reverb({
+      new Promise((resolve) => {
+        const rhodesReverb = new Reverb({
           decay: 2,
-          wet: 0.2
+          wet: 0.2,
         }).toMaster();
-        this.instruments[InstrumentType.Main] = new Tone.Sampler(
+        this.instruments[InstrumentType.Main] = new Sampler(
           {
             B3: '3_B_3.wav',
             D3: '3_D_3.wav',
             G3: '3_G_3.wav',
             B4: '4_B_3.wav',
             D4: '4_D_3.wav',
-            F4: '4_F_3.wav'
+            F4: '4_F_3.wav',
           },
-          () => resolve(),
+          () => resolve(true),
           './assets/instruments/rhodes/'
         ).connect(rhodesReverb);
         rhodesReverb.generate();
@@ -39,12 +38,12 @@ export default class Instruments {
     );
 
     promises.push(
-      new Promise(resolve => {
-        const vibraReverb = new Tone.Reverb({
+      new Promise((resolve) => {
+        const vibraReverb = new Reverb({
           decay: 2,
-          wet: 0.2
+          wet: 0.2,
         }).toMaster();
-        this.instruments[InstrumentType.Second] = new Tone.Sampler(
+        this.instruments[InstrumentType.Second] = new Sampler(
           {
             A5: '5_A.wav',
             Ab5: '5_Ab.wav',
@@ -57,9 +56,9 @@ export default class Instruments {
             Eb5: '5_Eb.wav',
             F5: '5_F.wav',
             G5: '5_G.wav',
-            Gb5: '5_Gb.wav'
+            Gb5: '5_Gb.wav',
           },
-          () => resolve(),
+          () => resolve(true),
           './assets/instruments/vibra/'
         ).connect(vibraReverb);
         vibraReverb.generate();

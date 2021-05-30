@@ -9,7 +9,7 @@ export enum TileState {
   Inactive,
   Hint,
   Validation,
-  Validated
+  Validated,
 }
 
 export default class Tile {
@@ -26,8 +26,8 @@ export default class Tile {
     x: number,
     y: number,
     collisionManager: CollisionManager,
-    private onEnterCallback: (value, state) => void,
-    private onExitCallback: (value, state) => void
+    private onEnterCallback: (value: number, state: TileState) => void,
+    private onExitCallback: (value: number, state: TileState) => void
   ) {
     this.sprite = game.add.sprite(x, y, Resources.TileNeutral);
     this.sprite.displayWidth = TILE_SIZE;
@@ -35,7 +35,7 @@ export default class Tile {
     this.zone = game.add.zone(x, y, TILE_SIZE, TILE_SIZE);
     this.text = game.add.text(x, y, `${value}`, {
       fontSize: 40,
-      align: 'center'
+      align: 'center',
     });
     this.text.setOrigin(0.5, 0.5);
 

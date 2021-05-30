@@ -7,7 +7,7 @@ import Walls from './objects/walls';
 import pathsConfig from './utils/pathsConfig';
 import { images, Resources, musics } from './utils/resources';
 import Exit from './objects/exit';
-import Orchestre from 'orchestre-js';
+import { Orchestre } from 'orchestre-js';
 import { areasConfig, soundEmittersConfig } from './utils/audioConfig';
 import Area from './objects/area';
 import SoundEmitter from './objects/soundEmitter';
@@ -54,9 +54,10 @@ export default class Game extends Phaser.Scene {
       this.player.sprite
     );
 
-    this.orchestre = new Orchestre(120);
+    const context = new AudioContext();
+    this.orchestre = new Orchestre(110, context);
     const musicLoading: Promise<void>[] = [];
-    const areas = areasConfig.map(areaConfig => {
+    const areas = areasConfig.map((areaConfig) => {
       const area = new Area(
         this,
         this.orchestre,
@@ -65,15 +66,17 @@ export default class Game extends Phaser.Scene {
         areaConfig.y,
         areaConfig.width,
         areaConfig.height,
-        areaConfig.music
+        areaConfig.music,
+        areaConfig.measure
       );
       musicLoading.push(area.load());
       return area;
     });
-    this.soundEmitters = soundEmittersConfig.map(emitterConfig => {
+    this.soundEmitters = soundEmittersConfig.map((emitterConfig) => {
       const emitter = new SoundEmitter(
         this,
         this.collisionsManager,
+        context,
         this.orchestre,
         this.player,
         emitterConfig.x,
@@ -132,7 +135,7 @@ export default class Game extends Phaser.Scene {
   update() {
     this.player.update();
     this.collisionsManager.update();
-    this.soundEmitters.forEach(emitter => emitter.update());
+    this.soundEmitters.forEach((emitter) => emitter.update());
   }
 
   private validatePath() {
@@ -162,9 +165,9 @@ const config: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true
-    }
-  }
+      debug: true,
+    },
+  },
 };
 
 const game = new Phaser.Game(config);

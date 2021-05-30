@@ -19,8 +19,8 @@
   },
   "homepage": "https://github.com/photonstorm/phaser3-typescript-project-template#readme",
   "dependencies": {
-    "orchestre-js": "^1.1.0",
-    "tone": "^13.8.25"
+    "orchestre-js": "^2.0.0",
+    "tone": "^14.7.77"
   },
   "devDependencies": {
     "@rollup/plugin-replace": "^2.3.0",

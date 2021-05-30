@@ -2,10 +2,15 @@ import 'phaser';
 import CollisionManager from './collisionManager';
 import { Resources, musics } from '../utils/resources';
 import Player from './player';
+import { Orchestre } from 'orchestre-js';
 
-export const SHORT_RANGE = 1024;
-export const MIDDLE_RANGE = 1600;
-export const LONG_RANGE = 2048;
+export const SHORT_RANGE = 800;
+export const MIDDLE_RANGE = 1024;
+export const LONG_RANGE = 1200;
+
+// export const SHORT_RANGE = 1024;
+// export const SHORT_RANGE = 1024;
+// export const MIDDLE_RANGE = 1600;
 
 const MIN_GAIN = 0.2;
 
@@ -18,7 +23,8 @@ export default class SoundEmitter {
   constructor(
     game: Phaser.Scene,
     collisionManager: CollisionManager,
-    private orchestre: any,
+    private context: AudioContext,
+    private orchestre: Orchestre,
     private player: Player,
     x: number,
     y: number,
@@ -39,9 +45,9 @@ export default class SoundEmitter {
     );
     game.add.sprite(x, y, '');
 
-    this.gainNode = new GainNode(orchestre.context);
+    this.gainNode = new GainNode(this.context);
     this.gainNode.connect(orchestre.master);
-    this.gainNode.gain.setValueAtTime(MIN_GAIN, orchestre.context.currentTime);
+    this.gainNode.gain.setValueAtTime(MIN_GAIN, this.context.currentTime);
     this.loading = orchestre.addPlayer(
       sound,
       musics.get(sound),
@@ -78,7 +84,7 @@ export default class SoundEmitter {
 
       this.gainNode.gain.setValueAtTime(
         Phaser.Math.Linear(MIN_GAIN, 1, 1 - distance / this.range),
-        this.orchestre.context.currentTime
+        this.context.currentTime
       );
     }
   }

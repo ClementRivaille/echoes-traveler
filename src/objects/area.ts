@@ -1,10 +1,10 @@
 import 'phaser';
 import CollisionManager from './collisionManager';
 import { Resources, musics } from '../utils/resources';
+import { Orchestre } from 'orchestre-js';
 
 export const UNIT = 1024;
 const FADE = 1.5;
-const MEASURE_LENGTH = 16;
 
 export default class Area {
   public active: boolean = false;
@@ -12,13 +12,14 @@ export default class Area {
 
   constructor(
     game: Phaser.Scene,
-    private orchestre: any,
+    private orchestre: Orchestre,
     collisonManager: CollisionManager,
     x: number,
     y: number,
     width: number,
     height: number,
-    private music: Resources
+    private music: Resources,
+    measure: number
   ) {
     const zone = game.add.zone(x * UNIT, y * UNIT, width * UNIT, height * UNIT);
     collisonManager.addOverlap(
@@ -27,12 +28,7 @@ export default class Area {
       () => this.exit()
     );
 
-    this.loading = orchestre.addPlayer(
-      music,
-      musics.get(music),
-      MEASURE_LENGTH,
-      true
-    );
+    this.loading = orchestre.addPlayer(music, musics.get(music), measure, true);
   }
 
   public load() {
