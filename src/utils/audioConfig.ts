@@ -28,6 +28,14 @@ export const areasConfig: AreaConfig[] = [
     music: Resources.city_bg,
     measure: 8,
   },
+  {
+    x: -1.5,
+    y: -3,
+    width: 6,
+    height: 3,
+    music: Resources.celtic_bg,
+    measure: 8,
+  },
 ];
 
 interface EmitterConfig {
@@ -297,5 +305,35 @@ export const soundEmittersConfig: EmitterConfig[] = [
     range: MIDDLE_RANGE,
     sound: Resources.city_xylo_rtm_A,
     length: 9,
+  },
+
+  // Celtic
+  {
+    x: (areasConfig[2].x - 1.2) * UNIT,
+    y: (areasConfig[2].y - 0.6) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.celtic_A_bagpipe,
+    length: 32,
+  },
+  {
+    x: (areasConfig[2].x - 0.9) * UNIT,
+    y: (areasConfig[2].y + 0.1) * UNIT,
+    range: LONG_RANGE,
+    sound: Resources.celtic_A_perc,
+    length: 16,
+  },
+  {
+    x: (areasConfig[2].x + -2.1) * UNIT,
+    y: (areasConfig[2].y - 0.7) * UNIT,
+    range: MIDDLE_RANGE,
+    sound: Resources.celtic_A_bombarde,
+    length: 32,
+  },
+  {
+    x: (areasConfig[2].x - 2.1) * UNIT,
+    y: (areasConfig[2].y + 0.5) * UNIT,
+    range: MIDDLE_RANGE,
+    sound: Resources.celtic_A_tenor,
+    length: 32,
   },
 ];

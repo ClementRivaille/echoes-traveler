@@ -51,6 +51,13 @@ export enum Resources {
   city_xylophone_rtm_F_2 = 'city_xylophone_rtm_F_2',
   city_xylophone_rtm_F = 'city_xylophone_rtm_F',
   city_xylo_rtm_A = 'city_xylo_rtm_A',
+
+  // Celtic
+  celtic_bg = 'celtic_bg',
+  celtic_A_bagpipe = 'celtic_A_bagpipe',
+  celtic_A_bombarde = 'celtic_A_bombarde',
+  celtic_A_perc = 'celtic_A_perc',
+  celtic_A_tenor = 'celtic_A_tenor',
 }
 
 export const images = new Map<Resources, string>([
@@ -140,4 +147,10 @@ export const musics = new Map<Resources, string>([
     'assets/music/city/city_xylophone-rtm-F.ogg',
   ],
   [Resources.city_xylo_rtm_A, 'assets/music/city/city_xylo-rtm-A.ogg'],
+
+  [Resources.celtic_bg, 'assets/music/celtic/celtic_bg.ogg'],
+  [Resources.celtic_A_bagpipe, 'assets/music/celtic/celtic_A_bagpipe.ogg'],
+  [Resources.celtic_A_bombarde, 'assets/music/celtic/celtic_A_bombarde.ogg'],
+  [Resources.celtic_A_perc, 'assets/music/celtic/celtic_A_perc.ogg'],
+  [Resources.celtic_A_tenor, 'assets/music/celtic/celtic_A_tenor.ogg'],
 ]);
