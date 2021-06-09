@@ -323,7 +323,7 @@ export const soundEmittersConfig: EmitterConfig[] = [
     length: 16,
   },
   {
-    x: (areasConfig[2].x + -2.1) * UNIT,
+    x: (areasConfig[2].x - 2.1) * UNIT,
     y: (areasConfig[2].y - 0.7) * UNIT,
     range: MIDDLE_RANGE,
     sound: Resources.celtic_A_bombarde,
@@ -334,6 +334,28 @@ export const soundEmittersConfig: EmitterConfig[] = [
     y: (areasConfig[2].y + 0.5) * UNIT,
     range: MIDDLE_RANGE,
     sound: Resources.celtic_A_tenor,
+    length: 32,
+  },
+  {
+    x: (areasConfig[2].x - 0.5) * UNIT,
+    y: (areasConfig[2].y + 0.4) * UNIT,
+    range: MIDDLE_RANGE,
+    sound: Resources.celtic_A2_bagpipe,
+    length: 32,
+  },
+  {
+    x: (areasConfig[2].x - 2.1) * UNIT,
+    y: (areasConfig[2].y - 0.1) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.celtic_A2_bombarde,
+    length: 16,
+  },
+  {
+    x: (areasConfig[2].x - 0.8) * UNIT,
+    y: (areasConfig[2].y - 0.9) * UNIT,
+    range: MIDDLE_RANGE,
+
+    sound: Resources.celtic_A2_bourdons,
     length: 32,
   },
 ];

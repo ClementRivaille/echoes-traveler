@@ -58,6 +58,9 @@ export enum Resources {
   celtic_A_bombarde = 'celtic_A_bombarde',
   celtic_A_perc = 'celtic_A_perc',
   celtic_A_tenor = 'celtic_A_tenor',
+  celtic_A2_bagpipe = 'celtic_A2_bagpipe',
+  celtic_A2_bombarde = 'celtic_A2_bombarde',
+  celtic_A2_bourdons = 'celtic_A2_bourdons',
 }
 
 export const images = new Map<Resources, string>([
@@ -153,4 +156,7 @@ export const musics = new Map<Resources, string>([
   [Resources.celtic_A_bombarde, 'assets/music/celtic/celtic_A_bombarde.ogg'],
   [Resources.celtic_A_perc, 'assets/music/celtic/celtic_A_perc.ogg'],
   [Resources.celtic_A_tenor, 'assets/music/celtic/celtic_A_tenor.ogg'],
+  [Resources.celtic_A2_bagpipe, 'assets/music/celtic/celtic_A2_bagpipe.ogg'],
+  [Resources.celtic_A2_bombarde, 'assets/music/celtic/celtic_A2_bombarde.ogg'],
+  [Resources.celtic_A2_bourdons, 'assets/music/celtic/celtic_A2_bourdons.ogg'],
 ]);
