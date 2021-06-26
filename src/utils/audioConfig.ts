@@ -456,4 +456,11 @@ export const soundEmittersConfig: EmitterConfig[] = [
     sound: Resources.celtic_C_whistle_high,
     length: 32,
   },
+  {
+    x: (areasConfig[2].x + 1.8) * UNIT,
+    y: (areasConfig[2].y - 0.2) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.celtic_C_ocarina,
+    length: 192,
+  },
 ];

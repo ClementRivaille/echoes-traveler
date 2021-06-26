@@ -75,6 +75,7 @@ export enum Resources {
   celtic_C_harp = 'celtic_C_harp',
   celtic_C_violin = 'celtic_C_violin',
   celtic_C_whistle_high = 'celtic_C_whistle_high',
+  celtic_C_ocarina = 'celtic_C_ocarina',
 }
 
 export const images = new Map<Resources, string>([
@@ -193,4 +194,5 @@ export const musics = new Map<Resources, string>([
     Resources.celtic_C_whistle_high,
     'assets/music/celtic/celtic_C_whistle_high.ogg',
   ],
+  [Resources.celtic_C_ocarina, 'assets/music/celtic/celtic_C_ocarina.ogg'],
 ]);
