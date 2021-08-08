@@ -76,6 +76,22 @@ export enum Resources {
   celtic_C_violin = 'celtic_C_violin',
   celtic_C_whistle_high = 'celtic_C_whistle_high',
   celtic_C_ocarina = 'celtic_C_ocarina',
+
+  // Sea
+  sea_bg = 'sea_bg',
+  sea_A_bass = 'sea_A_bass',
+  sea_A_bells = 'sea_A_bells',
+  sea_A_marimbas = 'sea_A_marimbas',
+  sea_A_piano = 'sea_A_piano',
+  sea_A_string = 'sea_A_string',
+  sea_A_whistle = 'sea_A_whistle',
+  sea_A_winds = 'sea_A_winds',
+  sea_A_chimes = 'sea_A_chimes',
+  sea_B_comet = 'sea_B_comet',
+  sea_B_guitars = 'sea_B_guitars',
+  sea_B_voyager = 'sea_B_voyager',
+  sea_B_flute = 'sea_B_flute',
+  sea_B_synth = 'sea_B_synth',
 }
 
 export const images = new Map<Resources, string>([
@@ -195,4 +211,19 @@ export const musics = new Map<Resources, string>([
     'assets/music/celtic/celtic_C_whistle_high.ogg',
   ],
   [Resources.celtic_C_ocarina, 'assets/music/celtic/celtic_C_ocarina.ogg'],
+
+  [Resources.sea_bg, 'assets/music/sea/sea_bg.ogg'],
+  [Resources.sea_A_bass, 'assets/music/sea/sea_A_bass.ogg'],
+  [Resources.sea_A_bells, 'assets/music/sea/sea_A_bells.ogg'],
+  [Resources.sea_A_marimbas, 'assets/music/sea/sea_A_marimbas.ogg'],
+  [Resources.sea_A_piano, 'assets/music/sea/sea_A_piano.ogg'],
+  [Resources.sea_A_string, 'assets/music/sea/sea_A_string.ogg'],
+  [Resources.sea_A_whistle, 'assets/music/sea/sea_A_whistle.ogg'],
+  [Resources.sea_A_winds, 'assets/music/sea/sea_A_winds.ogg'],
+  [Resources.sea_A_chimes, 'assets/music/sea/sea_A_chimes.ogg'],
+  [Resources.sea_B_comet, 'assets/music/sea/sea_B_comet.ogg'],
+  [Resources.sea_B_guitars, 'assets/music/sea/sea_B_guitars.ogg'],
+  [Resources.sea_B_voyager, 'assets/music/sea/sea_B_voyager.ogg'],
+  [Resources.sea_B_flute, 'assets/music/sea/sea_B_flute.ogg'],
+  [Resources.sea_B_synth, 'assets/music/sea/sea_B_synth.ogg'],
 ]);
