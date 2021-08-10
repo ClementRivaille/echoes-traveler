@@ -92,6 +92,14 @@ export enum Resources {
   sea_B_voyager = 'sea_B_voyager',
   sea_B_flute = 'sea_B_flute',
   sea_B_synth = 'sea_B_synth',
+  sea_C_cornemuse = 'sea_C_cornemuse',
+  sea_C_guitar = 'sea_C_guitar',
+  sea_C_oboe = 'sea_C_oboe',
+  sea_C_timpanis = 'sea_C_timpanis',
+  sea_C_cymbals = 'sea_C_cymbals',
+  sea_C_horn = 'sea_C_horn',
+  sea_C_strings = 'sea_C_strings',
+  sea_C_violin = 'sea_C_violin',
 }
 
 export const images = new Map<Resources, string>([
@@ -226,4 +234,12 @@ export const musics = new Map<Resources, string>([
   [Resources.sea_B_voyager, 'assets/music/sea/sea_B_voyager.ogg'],
   [Resources.sea_B_flute, 'assets/music/sea/sea_B_flute.ogg'],
   [Resources.sea_B_synth, 'assets/music/sea/sea_B_synth.ogg'],
+  [Resources.sea_C_cornemuse, 'assets/music/sea/sea_C_cornemuse.ogg'],
+  [Resources.sea_C_guitar, 'assets/music/sea/sea_C_guitar.ogg'],
+  [Resources.sea_C_oboe, 'assets/music/sea/sea_C_oboe.ogg'],
+  [Resources.sea_C_timpanis, 'assets/music/sea/sea_C_timpanis.ogg'],
+  [Resources.sea_C_cymbals, 'assets/music/sea/sea_C_cymbals.ogg'],
+  [Resources.sea_C_horn, 'assets/music/sea/sea_C_horn.ogg'],
+  [Resources.sea_C_strings, 'assets/music/sea/sea_C_strings.ogg'],
+  [Resources.sea_C_violin, 'assets/music/sea/sea_C_violin.ogg'],
 ]);
