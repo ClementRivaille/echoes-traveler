@@ -100,6 +100,20 @@ export enum Resources {
   sea_C_horn = 'sea_C_horn',
   sea_C_strings = 'sea_C_strings',
   sea_C_violin = 'sea_C_violin',
+
+  // Desert
+  desert_bg = 'desert_bg',
+  desert_A_chords = 'desert_A_chords',
+  desert_A_drums = 'desert_A_drums',
+  desert_A_rhodes = 'desert_A_rhodes',
+  desert_B_drum = 'desert_B_drum',
+  desert_B_piano = 'desert_B_piano',
+  desert_B_terje = 'desert_B_terje',
+  desert_B_synth = 'desert_B_synth',
+  desert_C_bells = 'desert_C_bells',
+  desert_C_marimba = 'desert_C_marimba',
+  desert_C_sax = 'desert_C_sax',
+  desert_flute = 'desert_flute',
 }
 
 export const images = new Map<Resources, string>([
@@ -242,4 +256,17 @@ export const musics = new Map<Resources, string>([
   [Resources.sea_C_horn, 'assets/music/sea/sea_C_horn.ogg'],
   [Resources.sea_C_strings, 'assets/music/sea/sea_C_strings.ogg'],
   [Resources.sea_C_violin, 'assets/music/sea/sea_C_violin.ogg'],
+
+  [Resources.desert_bg, 'assets/music/desert/desert_bg.ogg'],
+  [Resources.desert_A_chords, 'assets/music/desert/desert_A_chords.ogg'],
+  [Resources.desert_A_drums, 'assets/music/desert/desert_A_drums.ogg'],
+  [Resources.desert_A_rhodes, 'assets/music/desert/desert_A_rhodes.ogg'],
+  [Resources.desert_B_drum, 'assets/music/desert/desert_B_drum.ogg'],
+  [Resources.desert_B_piano, 'assets/music/desert/desert_B_piano.ogg'],
+  [Resources.desert_B_terje, 'assets/music/desert/desert_B_terje.ogg'],
+  [Resources.desert_B_synth, 'assets/music/desert/desert_B_synth.ogg'],
+  [Resources.desert_C_bells, 'assets/music/desert/desert_C_bells.ogg'],
+  [Resources.desert_C_marimba, 'assets/music/desert/desert_C_marimba.ogg'],
+  [Resources.desert_C_sax, 'assets/music/desert/desert_C_sax.ogg'],
+  [Resources.desert_flute, 'assets/music/desert/desert_flute.ogg'],
 ]);

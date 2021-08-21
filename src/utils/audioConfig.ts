@@ -44,6 +44,14 @@ export const areasConfig: AreaConfig[] = [
     music: Resources.sea_bg,
     measure: 16,
   },
+  {
+    x: 1.5,
+    y: 3,
+    width: 6,
+    height: 3,
+    music: Resources.desert_bg,
+    measure: 64,
+  },
 ];
 
 interface EmitterConfig {
@@ -619,5 +627,84 @@ export const soundEmittersConfig: EmitterConfig[] = [
     range: SHORT_RANGE,
     sound: Resources.sea_C_violin,
     length: 32,
+  },
+
+  // Desert
+  {
+    x: (areasConfig[4].x + 1.4) * UNIT,
+    y: (areasConfig[4].y + 0.3) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.desert_A_chords,
+    length: 48,
+  },
+  {
+    x: (areasConfig[4].x + 2.1) * UNIT,
+    y: (areasConfig[4].y + 0.4) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.desert_A_drums,
+    length: 16,
+  },
+  {
+    x: (areasConfig[4].x + 2.1) * UNIT,
+    y: (areasConfig[4].y - 0.1) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.desert_A_rhodes,
+    length: 32,
+  },
+  {
+    x: (areasConfig[4].x - 0.2) * UNIT,
+    y: (areasConfig[4].y - 0.3) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.desert_B_drum,
+    length: 8,
+  },
+  {
+    x: (areasConfig[4].x + 0.4) * UNIT,
+    y: (areasConfig[4].y + 0.1) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.desert_B_piano,
+    length: 64,
+  },
+  {
+    x: (areasConfig[4].x + 0.1) * UNIT,
+    y: (areasConfig[4].y + 0.5) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.desert_B_terje,
+    length: 22,
+  },
+  {
+    x: (areasConfig[4].x + 1.2) * UNIT,
+    y: (areasConfig[4].y - 0.4) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.desert_B_synth,
+    length: 32,
+  },
+  {
+    x: (areasConfig[4].x - 0.9) * UNIT,
+    y: (areasConfig[4].y - 0.7) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.desert_flute,
+    length: 16,
+  },
+  {
+    x: (areasConfig[4].x - 1.6) * UNIT,
+    y: (areasConfig[4].y - 0.1) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.desert_C_bells,
+    length: 32,
+  },
+  {
+    x: (areasConfig[4].x - 2.2) * UNIT,
+    y: (areasConfig[4].y - 0.4) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.desert_C_marimba,
+    length: 32,
+  },
+  {
+    x: (areasConfig[4].x - 2.2) * UNIT,
+    y: (areasConfig[4].y + 0.4) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.desert_C_sax,
+    length: 128,
   },
 ];
