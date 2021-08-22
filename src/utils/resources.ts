@@ -10,7 +10,18 @@ export enum Resources {
   ExitClosed = 'ExitClosed',
   ExitOpen = 'ExitOpen',
 
-  Bg1 = 'bg1',
+  // ---- MUSIC ----
+
+  // Hub
+  hub_bg = 'hub_bg',
+  hub_ccl_flutes = 'hub_ccl_flutes',
+  hub_cd_organ = 'hub_cd_organ',
+  hub_cls_accordion = 'hub_cls_accordion',
+  hub_cl_violin = 'hub_cl_violin',
+  hub_c_piano = 'hub_c_piano',
+  hub_d_chirp = 'hub_d_chirp',
+  hub_sd_bells = 'hub_sd_bells',
+  hub_s_harp = 'hub_s_harp',
 
   // City
   city_bg = 'city_bg',
@@ -130,7 +141,15 @@ export const images = new Map<Resources, string>([
 ]);
 
 export const musics = new Map<Resources, string>([
-  [Resources.Bg1, 'assets/music/test/bg1.ogg'],
+  [Resources.hub_bg, 'assets/music/hub/hub_bg.ogg'],
+  [Resources.hub_ccl_flutes, 'assets/music/hub/hub_ccl_flutes.ogg'],
+  [Resources.hub_cd_organ, 'assets/music/hub/hub_cd_organ.ogg'],
+  [Resources.hub_cls_accordion, 'assets/music/hub/hub_cls_accordion.ogg'],
+  [Resources.hub_cl_violin, 'assets/music/hub/hub_cl_violin.ogg'],
+  [Resources.hub_c_piano, 'assets/music/hub/hub_c_piano.ogg'],
+  [Resources.hub_d_chirp, 'assets/music/hub/hub_d_chirp.ogg'],
+  [Resources.hub_sd_bells, 'assets/music/hub/hub_sd_bells.ogg'],
+  [Resources.hub_s_harp, 'assets/music/hub/hub_s_harp.ogg'],
 
   [Resources.city_bg, 'assets/music/city/city_bg.ogg'],
   [Resources.city_A_melody_cello, 'assets/music/city/city_A-melody_cello.ogg'],

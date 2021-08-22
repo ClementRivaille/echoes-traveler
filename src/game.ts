@@ -93,7 +93,7 @@ export default class Game extends Phaser.Scene {
 
     await Promise.all(musicLoading);
     this.orchestre.start();
-    // areas[0].activate();
+    areas[0].activate();
 
     // Debug only
     this.camera.startFollow(this.player.sprite);
@@ -126,6 +126,8 @@ export default class Game extends Phaser.Scene {
       borders.group,
       this.player.sprite
     );
+    // Early exit for debug
+    this.bordersCollider.active = false;
 
     this.exit = new Exit(this, 0, -300, this.collisionsManager);
 

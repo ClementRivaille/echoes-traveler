@@ -17,8 +17,8 @@ export const areasConfig: AreaConfig[] = [
     y: 0,
     width: 3,
     height: 3,
-    music: Resources.Bg1,
-    measure: 16,
+    music: Resources.hub_bg,
+    measure: 32,
   },
   {
     x: 3,
@@ -63,6 +63,63 @@ interface EmitterConfig {
 }
 
 export const soundEmittersConfig: EmitterConfig[] = [
+  {
+    x: (areasConfig[0].x + 1.0) * UNIT,
+    y: (areasConfig[0].y - 1.0) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.hub_ccl_flutes,
+    length: 8,
+  },
+  {
+    x: (areasConfig[0].x + 1.0) * UNIT,
+    y: (areasConfig[0].y + 1.0) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.hub_cd_organ,
+    length: 16,
+  },
+  {
+    x: (areasConfig[0].x - 1.0) * UNIT,
+    y: (areasConfig[0].y - 1.0) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.hub_cls_accordion,
+    length: 32,
+  },
+  {
+    x: (areasConfig[0].x + 0.0) * UNIT,
+    y: (areasConfig[0].y - 1.4) * UNIT,
+    range: MIDDLE_RANGE,
+    sound: Resources.hub_cl_violin,
+    length: 16,
+  },
+  {
+    x: (areasConfig[0].x + 1.5) * UNIT,
+    y: (areasConfig[0].y + 0.0) * UNIT,
+    range: MIDDLE_RANGE,
+    sound: Resources.hub_c_piano,
+    length: 13,
+  },
+  {
+    x: (areasConfig[0].x + 0.0) * UNIT,
+    y: (areasConfig[0].y + 1.2) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.hub_d_chirp,
+    length: 156,
+  },
+  {
+    x: (areasConfig[0].x - 1.0) * UNIT,
+    y: (areasConfig[0].y + 1.0) * UNIT,
+    range: SHORT_RANGE,
+    sound: Resources.hub_sd_bells,
+    length: 32,
+  },
+  {
+    x: (areasConfig[0].x - 1.5) * UNIT,
+    y: (areasConfig[0].y + 0.0) * UNIT,
+    range: MIDDLE_RANGE,
+    sound: Resources.hub_s_harp,
+    length: 32,
+  },
+
   {
     x: (areasConfig[1].x + 0.4) * UNIT,
     y: (areasConfig[1].y - 2) * UNIT,
