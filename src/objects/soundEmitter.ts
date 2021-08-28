@@ -10,6 +10,8 @@ export const SHORT_RANGE = 800;
 export const MIDDLE_RANGE = 1024;
 export const LONG_RANGE = 1200;
 
+export const MAX_STEREO_PAN = 0.8;
+
 // export const SHORT_RANGE = 1024;
 // export const SHORT_RANGE = 1024;
 // export const MIDDLE_RANGE = 1600;
@@ -18,6 +20,7 @@ const MIN_GAIN = 0.1;
 
 export default class SoundEmitter {
   private gainNode: GainNode;
+  private stereoPannerNode: StereoPannerNode;
   private active: boolean = false;
   private zones: Phaser.GameObjects.Zone[] = [];
   private overlapGroup: OverlapGroup;
@@ -64,8 +67,10 @@ export default class SoundEmitter {
     game.add.sprite(x, y, ''); // Debug sprite
 
     // Instrument & sound
+    this.stereoPannerNode = new StereoPannerNode(this.context);
+    this.stereoPannerNode.connect(orchestre.master);
     this.gainNode = new GainNode(this.context);
-    this.gainNode.connect(orchestre.master);
+    this.gainNode.connect(this.stereoPannerNode);
     this.gainNode.gain.setValueAtTime(MIN_GAIN, this.context.currentTime);
     this.loading = orchestre.addPlayer(
       sound,
@@ -114,6 +119,18 @@ export default class SoundEmitter {
 
       this.gainNode.gain.setValueAtTime(
         Phaser.Math.Linear(MIN_GAIN, 1, 1 - distance / this.range),
+        this.context.currentTime
+      );
+
+      // Update pan
+      const distanceX = Math.abs(playerPos.x - activeZone.x);
+      const side = playerPos.x > activeZone.x ? -1 : 1;
+      this.stereoPannerNode.pan.setValueAtTime(
+        Phaser.Math.Linear(
+          0,
+          MAX_STEREO_PAN,
+          Math.min(distanceX / MIDDLE_RANGE, 1.0)
+        ) * side,
         this.context.currentTime
       );
     }
