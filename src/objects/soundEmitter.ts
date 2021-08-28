@@ -14,7 +14,7 @@ export const LONG_RANGE = 1200;
 // export const SHORT_RANGE = 1024;
 // export const MIDDLE_RANGE = 1600;
 
-const MIN_GAIN = 0.2;
+const MIN_GAIN = 0.1;
 
 export default class SoundEmitter {
   private gainNode: GainNode;

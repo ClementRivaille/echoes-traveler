@@ -113,9 +113,9 @@ export const soundEmittersConfig: EmitterConfig[] = [
     length: 32,
   },
   {
-    x: (areasConfig[0].x - 1.5) * UNIT,
+    x: (areasConfig[0].x - 1.3) * UNIT,
     y: (areasConfig[0].y + 0.0) * UNIT,
-    range: MIDDLE_RANGE,
+    range: SHORT_RANGE,
     sound: Resources.hub_s_harp,
     length: 32,
   },
