@@ -12,6 +12,7 @@ import { areasConfig, soundEmittersConfig } from './utils/audioConfig';
 import Area from './objects/area';
 import SoundEmitter from './objects/soundEmitter';
 import Instruments from './utils/instruments';
+import World from './objects/world';
 
 export default class Game extends Phaser.Scene {
   private player: Player;
@@ -29,6 +30,7 @@ export default class Game extends Phaser.Scene {
   private orchestre: Orchestre;
   private soundEmitters: SoundEmitter[];
   private instruments: Instruments;
+  private world: World;
 
   constructor() {
     super('game');
@@ -48,6 +50,7 @@ export default class Game extends Phaser.Scene {
     this.add.sprite(0, 0, Resources.Background);
 
     this.player = new Player(this, 0, 0);
+    this.world = new World(this.player);
 
     this.collisionsManager = new CollisionManager(
       this.physics,
@@ -136,6 +139,7 @@ export default class Game extends Phaser.Scene {
 
   update() {
     this.player.update();
+    this.world.update();
     this.collisionsManager.update();
     this.soundEmitters.forEach((emitter) => emitter.update());
   }

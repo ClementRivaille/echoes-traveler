@@ -35,4 +35,8 @@ export default class Player {
   public getPosition() {
     return { x: this.sprite.x, y: this.sprite.y };
   }
+
+  public warp(x: number, y: number) {
+    this.sprite.setPosition(x, y);
+  }
 }
