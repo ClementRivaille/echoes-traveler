@@ -75,7 +75,7 @@ export default class Tile {
       this.sprite.setTexture(Resources.TileNeutral);
     } else if (this.state === TileState.Hint) {
       this.text.setColor(STEP_COLOR);
-      this.sprite.tint = 0x100100100;
+      this.sprite.tint = 0xfcea23;
     } else if (this.state === TileState.Validation) {
       this.text.setColor(STEP_COLOR);
       this.sprite.setTexture(
