@@ -120,11 +120,18 @@ export default class Path {
         // Break combo
         this.exitPath();
         this.hintTile(value - 1);
+      } else if (
+        this.state === PathState.Validation &&
+        [TileState.Validated, TileState.Validation].includes(state)
+      ) {
+        this.instruments.play(
+          NOTES[(value - 1) % NOTES.length],
+          InstrumentType.Second
+        );
       }
 
       // Step on a latter tile while inactive
       else if (this.state === PathState.Inactive) {
-        // Play just a hint note (TODO)
         this.hintTile(value - 1);
       }
     }

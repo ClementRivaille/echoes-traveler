@@ -3,7 +3,7 @@ import { Resources } from '../utils/resources';
 import CollisionManager from './collisionManager';
 
 export const TILE_SIZE = 96;
-const ZONE_SIZE = TILE_SIZE - 20;
+const INNER_ZONE_SIZE = TILE_SIZE - 50;
 const STEP_COLOR = 'rgba(100,100,100, 1)';
 
 export enum TileState {
@@ -14,7 +14,8 @@ export enum TileState {
 }
 
 export default class Tile {
-  public zone: Phaser.GameObjects.Zone;
+  private zone: Phaser.GameObjects.Zone;
+  private innerZone: Phaser.GameObjects.Zone;
   private sprite: Phaser.GameObjects.Sprite;
   private text: Phaser.GameObjects.Text;
 
@@ -33,7 +34,8 @@ export default class Tile {
     this.sprite = game.add.sprite(x, y, Resources.TileNeutral);
     this.sprite.displayWidth = TILE_SIZE;
     this.sprite.displayHeight = TILE_SIZE;
-    this.zone = game.add.zone(x, y, ZONE_SIZE, ZONE_SIZE);
+    this.zone = game.add.zone(x, y, TILE_SIZE, TILE_SIZE);
+    this.innerZone = game.add.zone(x, y, INNER_ZONE_SIZE, INNER_ZONE_SIZE);
     this.text = game.add.text(x, y, `${value}`, {
       fontSize: 40,
       align: 'center',
@@ -43,8 +45,13 @@ export default class Tile {
     game.physics.world.enable(this.zone);
     collisionManager.addOverlap(
       this.zone,
-      () => this.onEnter(),
+      () => {},
       () => this.onExit()
+    );
+    collisionManager.addOverlap(
+      this.innerZone,
+      () => this.onEnter(),
+      () => {}
     );
   }
 

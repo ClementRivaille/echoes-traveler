@@ -102,8 +102,8 @@ export default class Game extends Phaser.Scene {
     this.orchestre.start();
     areas[0].activate();
 
-    // Debug only
-    this.camera.startFollow(this.player.sprite);
+    // Debug camera
+    // this.camera.startFollow(this.player.sprite);
 
     // Position paths
     for (const pathConfig of pathsConfig) {
