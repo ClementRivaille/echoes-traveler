@@ -1,4 +1,6 @@
 export enum Resources {
+  // ---- SPRITES ----
+
   Background = 'background',
   Player = 'player',
   TileNeutral = 'tileNeutral',
@@ -9,6 +11,11 @@ export enum Resources {
   Wall = 'Wall',
   ExitClosed = 'ExitClosed',
   ExitOpen = 'ExitOpen',
+
+  // ---- SOUNDS ----
+
+  ValidatePath = 'validatePath',
+  FailPath = 'failPath',
 
   // ---- MUSIC ----
 
@@ -138,6 +145,10 @@ export const images = new Map<Resources, string>([
   [Resources.Wall, 'assets/sprites/wall.png'],
   [Resources.ExitClosed, 'assets/sprites/exit_closed.png'],
   [Resources.ExitOpen, 'assets/sprites/exit_open.png'],
+]);
+
+export const sounds = new Map<Resources, string>([
+  [Resources.ValidatePath, 'assets/sounds/tubular_bells.wav'],
 ]);
 
 export const musics = new Map<Resources, string>([

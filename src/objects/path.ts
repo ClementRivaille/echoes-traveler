@@ -2,21 +2,23 @@ import 'phaser';
 import Tile, { TILE_SIZE, TileState } from './tile';
 import CollisionManager from './collisionManager';
 import Instruments, { InstrumentType } from '../utils/instruments';
+import Sounds from '../utils/Sounds';
+import { Resources } from '../utils/resources';
 
 export enum Directions {
   Up,
   Down,
   Left,
-  Right
+  Right,
 }
 
 enum PathState {
   Inactive,
   Validation,
-  Validated
+  Validated,
 }
 
-const NOTES = ['C4', 'E4', 'F#4', 'G4', 'B4', 'D5', 'E5'];
+const NOTES = ['D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5', 'D5'];
 
 export default class Path {
   private tiles: Tile[];
@@ -31,6 +33,7 @@ export default class Path {
     directions: Directions[],
     collisionManager: CollisionManager,
     private instruments: Instruments,
+    private sounds: Sounds,
     private onValidateCallback: () => void
   ) {
     const firstTile = new Tile(
@@ -66,7 +69,7 @@ export default class Path {
           (value, state) => this.onTileEnter(value, state),
           (value, state) => this.onTileExit(value, state)
         );
-      })
+      }),
     ];
   }
 
@@ -93,14 +96,18 @@ export default class Path {
           NOTES[(value - 1) % NOTES.length],
           InstrumentType.Main
         );
+        this.instruments.play(
+          NOTES[(value - 1) % NOTES.length],
+          InstrumentType.Second
+        );
 
         // Initialise validation state
         if (this.state === PathState.Inactive) {
           this.state = PathState.Validation;
           const hintedTiles = this.tiles.filter(
-            tile => tile.getState() === TileState.Hint
+            (tile) => tile.getState() === TileState.Hint
           );
-          hintedTiles.forEach(tile => tile.setState(TileState.Inactive));
+          hintedTiles.forEach((tile) => tile.setState(TileState.Inactive));
         }
       }
 
@@ -128,7 +135,7 @@ export default class Path {
     if (
       this.state === PathState.Validation &&
       this.tiles.findIndex(
-        tile =>
+        (tile) =>
           [TileState.Validated, TileState.Validation].includes(
             tile.getState()
           ) && tile.isSteppedOn()
@@ -141,20 +148,20 @@ export default class Path {
     // Clean hinted tiles
     if (
       this.state === PathState.Inactive &&
-      this.tiles.findIndex(tile => tile.isSteppedOn()) === -1
+      this.tiles.findIndex((tile) => tile.isSteppedOn()) === -1
     ) {
-      this.tiles.forEach(tile => tile.setState(TileState.Inactive));
+      this.tiles.forEach((tile) => tile.setState(TileState.Inactive));
     }
   }
 
   private exitPath() {
-    this.tiles.forEach(tile => tile.setState(TileState.Inactive));
+    this.tiles.forEach((tile) => tile.setState(TileState.Inactive));
     this.step = 0;
     this.state = PathState.Inactive;
   }
 
   private hintTile(index) {
-    this.tiles.forEach(tile => tile.setState(TileState.Inactive));
+    this.tiles.forEach((tile) => tile.setState(TileState.Inactive));
     this.tiles[index].setState(TileState.Hint);
     this.instruments.play(NOTES[index % NOTES.length], InstrumentType.Second);
   }
@@ -162,6 +169,7 @@ export default class Path {
   private validate() {
     this.state = PathState.Validated;
     this.tiles[this.step].setState(TileState.Validated);
+    this.sounds.play(Resources.ValidatePath);
     this.onValidateCallback();
   }
 }

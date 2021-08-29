@@ -1,4 +1,5 @@
 import { Directions } from '../objects/path';
+import { TILE_SIZE } from '../objects/tile';
 
 interface PahtConfig {
   x: number;
@@ -10,18 +11,19 @@ interface PahtConfig {
 
 const pathsConfig: PahtConfig[] = [
   {
-    x: -190,
-    y: 100,
+    x: -TILE_SIZE,
+    y: -TILE_SIZE,
     directions: [
+      Directions.Right,
+      Directions.Right,
       Directions.Down,
-      Directions.Right,
-      Directions.Right,
-      Directions.Right,
+      Directions.Down,
+      Directions.Left,
+      Directions.Left,
       Directions.Up,
-      Directions.Up
     ],
-    torchX: -100,
-    torchY: -100
-  }
+    torchX: 0,
+    torchY: 0,
+  },
 ];
 export default pathsConfig;

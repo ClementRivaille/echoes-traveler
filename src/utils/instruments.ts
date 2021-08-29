@@ -1,4 +1,4 @@
-import { Reverb, Sampler } from 'tone';
+import { Destination, Reverb, Sampler } from 'tone';
 
 export enum InstrumentType {
   Main = 'main',
@@ -6,7 +6,7 @@ export enum InstrumentType {
 }
 
 export default class Instruments {
-  private instruments: { [key: string]: any };
+  private instruments: { [key: string]: Sampler };
   private loading: Promise<any>;
 
   constructor() {
@@ -15,54 +15,43 @@ export default class Instruments {
 
     promises.push(
       new Promise((resolve) => {
-        const rhodesReverb = new Reverb({
+        const mainReverb = new Reverb({
           decay: 2,
-          wet: 0.2,
-        }).toMaster();
+          wet: 0.5,
+        }).toDestination();
         this.instruments[InstrumentType.Main] = new Sampler(
           {
-            B3: '3_B_3.wav',
-            D3: '3_D_3.wav',
-            G3: '3_G_3.wav',
-            B4: '4_B_3.wav',
-            D4: '4_D_3.wav',
-            F4: '4_F_3.wav',
+            D4: 'D4.wav',
+            G4: 'G4.wav',
+            C5: 'C5.wav',
           },
           () => resolve(true),
-          './assets/instruments/rhodes/'
-        ).connect(rhodesReverb);
-        rhodesReverb.generate();
-        this.instruments[InstrumentType.Main].release = 2;
-        // this.instruments[InstrumentType.Main].volume = -2;
+          './assets/instruments/string_pad/'
+        ).connect(mainReverb);
+        mainReverb.generate();
+        this.instruments[InstrumentType.Main].release = 3;
+        this.instruments[InstrumentType.Main].set({ volume: 6 });
       })
     );
 
     promises.push(
       new Promise((resolve) => {
-        const vibraReverb = new Reverb({
+        const secondReverb = new Reverb({
           decay: 2,
-          wet: 0.2,
-        }).toMaster();
+          wet: 0.4,
+        }).toDestination();
         this.instruments[InstrumentType.Second] = new Sampler(
           {
-            A5: '5_A.wav',
-            Ab5: '5_Ab.wav',
-            B5: '5_B.wav',
-            Bb5: '5_Bb.wav',
-            C5: '5_C.wav',
-            D5: '5_D.wav',
-            Db5: '5_Db.wav',
-            E5: '5_E.wav',
-            Eb5: '5_Eb.wav',
-            F5: '5_F.wav',
-            G5: '5_G.wav',
-            Gb5: '5_Gb.wav',
+            D4: 'D4.wav',
+            G4: 'G4.wav',
+            C5: 'C5.wav',
           },
           () => resolve(true),
-          './assets/instruments/vibra/'
-        ).connect(vibraReverb);
-        vibraReverb.generate();
-        this.instruments[InstrumentType.Second].release = 0.9;
+          './assets/instruments/glass/'
+        ).connect(secondReverb);
+        secondReverb.generate();
+        this.instruments[InstrumentType.Second].release = 3;
+        this.instruments[InstrumentType.Second].set({ volume: 6 });
       })
     );
 

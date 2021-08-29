@@ -13,6 +13,7 @@ import Area from './objects/area';
 import SoundEmitter from './objects/soundEmitter';
 import Instruments from './utils/instruments';
 import World from './objects/world';
+import Sounds from './utils/Sounds';
 
 export default class Game extends Phaser.Scene {
   private player: Player;
@@ -30,6 +31,7 @@ export default class Game extends Phaser.Scene {
   private orchestre: Orchestre;
   private soundEmitters: SoundEmitter[];
   private instruments: Instruments;
+  private sounds: Sounds;
   private world: World;
 
   constructor() {
@@ -93,6 +95,8 @@ export default class Game extends Phaser.Scene {
     });
     this.instruments = new Instruments();
     musicLoading.push(this.instruments.load());
+    this.sounds = new Sounds();
+    musicLoading.push(this.sounds.load());
 
     await Promise.all(musicLoading);
     this.orchestre.start();
@@ -101,6 +105,7 @@ export default class Game extends Phaser.Scene {
     // Debug only
     this.camera.startFollow(this.player.sprite);
 
+    // Position paths
     for (const pathConfig of pathsConfig) {
       this.paths.push(
         new Path(
@@ -110,6 +115,7 @@ export default class Game extends Phaser.Scene {
           pathConfig.directions,
           this.collisionsManager,
           this.instruments,
+          this.sounds,
           () => this.validatePath()
         )
       );
@@ -122,8 +128,6 @@ export default class Game extends Phaser.Scene {
       );
     }
 
-    const walls = new Walls(this);
-    this.physics.add.collider(walls.group, this.player.sprite);
     const borders = new Borders(this, this.camera.width, this.camera.height);
     this.bordersCollider = this.physics.add.collider(
       borders.group,
