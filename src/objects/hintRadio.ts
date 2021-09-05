@@ -6,26 +6,26 @@ import { musics, Resources } from '../utils/resources';
 
 const RANGE = 50;
 const HIGH_FILTER_OPTIONS = {
-  frequency: 1600,
+  frequency: 1800,
   type: 'highpass' as BiquadFilterType,
-  Q: 20,
+  Q: 2.2,
 };
 
 export default class HintRadio {
-  private soundName: string;
+  private soundNames: string[] = [];
   private whiteNoise = new Noise({
-    type: 'white',
+    type: 'pink',
     fadeIn: 0.1,
     fadeOut: 0.2,
-    volume: -55,
+    volume: -40,
   });
-  private loading: Promise<void>;
+  private loading: Array<Promise<void>> = [];
 
   constructor(
     private game: Phaser.Scene,
     x: number,
     y: number,
-    sound: Resources
+    sounds: Resources[]
   ) {
     const zone = game.add.zone(x, y, 0, 0);
     Game.collisionsManager.addOverlap(
@@ -35,9 +35,6 @@ export default class HintRadio {
     );
     (zone.body as Phaser.Physics.Arcade.Body).setCircle(RANGE, -RANGE, -RANGE);
 
-    this.soundName = `${sound}_hint`;
-    const config = soundEmittersConfig.find((config) => config.sound === sound);
-
     const noiseFilter = new Filter(
       HIGH_FILTER_OPTIONS as Partial<FilterOptions>
     ).toDestination();
@@ -45,11 +42,11 @@ export default class HintRadio {
 
     const highPass = new BiquadFilterNode(Game.context, HIGH_FILTER_OPTIONS);
     const distorsion = new WaveShaperNode(Game.context, {
-      curve: makeDistortionCurve(16),
+      curve: makeDistortionCurve(20),
     });
     const compressor = new DynamicsCompressorNode(Game.context, {
-      threshold: -5,
-      ratio: 1.4,
+      threshold: -4,
+      ratio: 1.6,
       attack: 0.2,
       release: 0.1,
     });
@@ -60,27 +57,42 @@ export default class HintRadio {
     distorsion.connect(compressor);
     compressor.connect(gain);
     gain.connect(Game.orchestre.master);
-    this.loading = Game.orchestre.addPlayer(
-      this.soundName,
-      musics.get(sound),
-      (config && config.length) || 16,
-      true,
-      highPass
-    );
+
+    for (const sound of sounds) {
+      const name = `${sound}_hint`;
+      this.soundNames.push(name);
+      const config = soundEmittersConfig.find(
+        (config) => config.sound === sound
+      );
+      this.loading.push(
+        Game.orchestre.addPlayer(
+          name,
+          musics.get(sound),
+          (config && config.length) || 16,
+          true,
+          highPass
+        )
+      );
+    }
   }
 
-  public load() {
-    return this.loading;
+  public async load(): Promise<void> {
+    await Promise.all(this.loading);
+    return;
   }
 
   private enter() {
     this.whiteNoise.start();
-    Game.orchestre.play(this.soundName, { now: true, fade: 0.2 });
+    for (const soundName of this.soundNames) {
+      Game.orchestre.play(soundName, { now: true, fade: 0.2 });
+    }
   }
 
   private exit() {
     this.whiteNoise.stop();
-    Game.orchestre.stop(this.soundName, { now: true, fade: 0.2 });
+    for (const soundName of this.soundNames) {
+      Game.orchestre.stop(soundName, { now: true, fade: 0.2 });
+    }
   }
 }
 

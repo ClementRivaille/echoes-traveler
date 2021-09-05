@@ -10,7 +10,7 @@ interface PahtConfig {
   directions: Directions[];
   torchX: number;
   torchY: number;
-  hint?: Resources;
+  hint?: Resources[];
 }
 
 const TORCH_POSITION = 200;
@@ -45,7 +45,7 @@ const pathsConfig: PahtConfig[] = [
     ],
     torchX: TORCH_POSITION,
     torchY: TORCH_POSITION,
-    hint: Resources.desert_B_terje,
+    hint: [Resources.desert_B_terje, Resources.desert_B_drum],
   },
   {
     x: (areasConfig[3].x - 1) * UNIT,
@@ -61,7 +61,7 @@ const pathsConfig: PahtConfig[] = [
     ],
     torchX: -TORCH_POSITION,
     torchY: TORCH_POSITION,
-    hint: Resources.sea_B_synth,
+    hint: [Resources.sea_B_synth, Resources.sea_C_oboe],
   },
   {
     x: (areasConfig[1].x - 0.4) * UNIT,
@@ -77,7 +77,7 @@ const pathsConfig: PahtConfig[] = [
     ],
     torchX: TORCH_POSITION,
     torchY: -TORCH_POSITION,
-    hint: Resources.city_A_melody_vibra,
+    hint: [Resources.city_A_melody_vibra, Resources.city_marimba_rtm_A],
   },
   {
     x: (areasConfig[2].x + 2) * UNIT,
@@ -93,7 +93,7 @@ const pathsConfig: PahtConfig[] = [
     ],
     torchX: -TORCH_POSITION,
     torchY: -TORCH_POSITION,
-    hint: Resources.hub_celtic_clue,
+    hint: [Resources.hub_celtic_clue, Resources.celtic_C_harp],
   },
 ];
 export default pathsConfig;
