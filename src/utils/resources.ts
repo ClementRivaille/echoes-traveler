@@ -150,6 +150,7 @@ export const images = new Map<Resources, string>([
 
 export const sounds = new Map<Resources, string>([
   [Resources.ValidatePath, 'assets/sounds/tubular_bells.wav'],
+  [Resources.FailPath, 'assets/sounds/fail.wav'],
 ]);
 
 export const musics = new Map<Resources, string>([

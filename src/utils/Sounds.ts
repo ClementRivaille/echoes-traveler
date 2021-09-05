@@ -6,7 +6,7 @@ export default class Sounds {
   private promises: Promise<void>[] = [];
   constructor() {
     const gain = new Gain(0.7).toDestination();
-    for (const soundRes of [Resources.ValidatePath]) {
+    for (const soundRes of [Resources.ValidatePath, Resources.FailPath]) {
       this.promises.push(
         new Promise((resolve) => {
           this.players[soundRes] = new Player(sounds.get(soundRes), () =>
@@ -26,6 +26,7 @@ export default class Sounds {
 
   play(res: Resources) {
     const sound = this.players[res];
+    console.log(res);
     if (sound) {
       sound.start();
     }

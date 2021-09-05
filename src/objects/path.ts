@@ -163,6 +163,7 @@ export default class Path {
     this.tiles.forEach((tile) => tile.setState(TileState.Inactive));
     this.step = 0;
     this.state = PathState.Inactive;
+    this.sounds.play(Resources.FailPath);
   }
 
   private hintTile(index) {
