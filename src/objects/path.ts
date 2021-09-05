@@ -4,6 +4,7 @@ import CollisionManager from './collisionManager';
 import Instruments, { InstrumentType } from '../utils/instruments';
 import Sounds from '../utils/Sounds';
 import { Resources } from '../utils/resources';
+import Game from '../game';
 
 export enum Directions {
   Up,
@@ -27,11 +28,10 @@ export default class Path {
   private step = 0;
 
   constructor(
-    private game: Phaser.Scene,
+    game: Phaser.Scene,
     x: number,
     y: number,
     directions: Directions[],
-    collisionManager: CollisionManager,
     private instruments: Instruments,
     private sounds: Sounds,
     private onValidateCallback: () => void
@@ -41,7 +41,6 @@ export default class Path {
       1,
       x,
       y,
-      collisionManager,
       (value, state) => this.onTileEnter(value, state),
       (value, state) => this.onTileExit(value, state)
     );
@@ -65,7 +64,6 @@ export default class Path {
           index + 2,
           stepX,
           stepY,
-          collisionManager,
           (value, state) => this.onTileEnter(value, state),
           (value, state) => this.onTileExit(value, state)
         );

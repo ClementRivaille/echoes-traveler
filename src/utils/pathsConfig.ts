@@ -2,6 +2,7 @@ import { UNIT } from '../objects/area';
 import { Directions } from '../objects/path';
 import { TILE_SIZE } from '../objects/tile';
 import { areasConfig } from './audioConfig';
+import { Resources } from './resources';
 
 interface PahtConfig {
   x: number;
@@ -9,6 +10,7 @@ interface PahtConfig {
   directions: Directions[];
   torchX: number;
   torchY: number;
+  hint?: Resources;
 }
 
 const TORCH_POSITION = 200;
@@ -43,6 +45,7 @@ const pathsConfig: PahtConfig[] = [
     ],
     torchX: TORCH_POSITION,
     torchY: TORCH_POSITION,
+    hint: Resources.desert_B_terje,
   },
   {
     x: (areasConfig[3].x - 1) * UNIT,
@@ -58,6 +61,7 @@ const pathsConfig: PahtConfig[] = [
     ],
     torchX: -TORCH_POSITION,
     torchY: TORCH_POSITION,
+    hint: Resources.sea_B_synth,
   },
   {
     x: (areasConfig[1].x - 0.4) * UNIT,
@@ -73,6 +77,7 @@ const pathsConfig: PahtConfig[] = [
     ],
     torchX: TORCH_POSITION,
     torchY: -TORCH_POSITION,
+    hint: Resources.city_A_melody_vibra,
   },
   {
     x: (areasConfig[2].x + 2) * UNIT,
@@ -88,6 +93,7 @@ const pathsConfig: PahtConfig[] = [
     ],
     torchX: -TORCH_POSITION,
     torchY: -TORCH_POSITION,
+    hint: Resources.hub_celtic_clue,
   },
 ];
 export default pathsConfig;

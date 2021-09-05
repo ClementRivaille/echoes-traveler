@@ -5,6 +5,7 @@ import Player from './player';
 import { Orchestre } from 'orchestre-js';
 import OverlapGroup from './overlapGroup';
 import World from './world';
+import Game from '../game';
 
 export const SHORT_RANGE = 800;
 export const MIDDLE_RANGE = 1024;
@@ -28,9 +29,6 @@ export default class SoundEmitter {
 
   constructor(
     game: Phaser.Scene,
-    collisionManager: CollisionManager,
-    private context: AudioContext,
-    private orchestre: Orchestre,
     private player: Player,
     x: number,
     y: number,
@@ -40,7 +38,7 @@ export default class SoundEmitter {
   ) {
     // Player detection
     this.overlapGroup = new OverlapGroup(
-      collisionManager,
+      Game.collisionsManager,
       () => this.enter(),
       () => this.exit()
     );
@@ -67,12 +65,12 @@ export default class SoundEmitter {
     game.add.sprite(x, y, ''); // Debug sprite
 
     // Instrument & sound
-    this.stereoPannerNode = new StereoPannerNode(this.context);
-    this.stereoPannerNode.connect(orchestre.master);
-    this.gainNode = new GainNode(this.context);
+    this.stereoPannerNode = new StereoPannerNode(Game.context);
+    this.stereoPannerNode.connect(Game.orchestre.master);
+    this.gainNode = new GainNode(Game.context);
     this.gainNode.connect(this.stereoPannerNode);
-    this.gainNode.gain.setValueAtTime(MIN_GAIN, this.context.currentTime);
-    this.loading = orchestre.addPlayer(
+    this.gainNode.gain.setValueAtTime(MIN_GAIN, Game.context.currentTime);
+    this.loading = Game.orchestre.addPlayer(
       sound,
       musics.get(sound),
       soundLength,
@@ -83,15 +81,15 @@ export default class SoundEmitter {
 
   private enter() {
     this.active = true;
-    if (this.orchestre.started) {
-      this.orchestre.play(this.sound, { now: true, fade: 0.3 });
+    if (Game.orchestre.started) {
+      Game.orchestre.play(this.sound, { now: true, fade: 0.3 });
     }
   }
 
   private exit() {
     this.active = false;
-    if (this.orchestre.started) {
-      this.orchestre.stop(this.sound, { now: true, fade: 0.3 });
+    if (Game.orchestre.started) {
+      Game.orchestre.stop(this.sound, { now: true, fade: 0.3 });
     }
   }
 
@@ -119,7 +117,7 @@ export default class SoundEmitter {
 
       this.gainNode.gain.setValueAtTime(
         Phaser.Math.Linear(MIN_GAIN, 1, 1 - distance / this.range),
-        this.context.currentTime
+        Game.context.currentTime
       );
 
       // Update pan
@@ -131,7 +129,7 @@ export default class SoundEmitter {
           MAX_STEREO_PAN,
           Math.min(distanceX / MIDDLE_RANGE, 1.0)
         ) * side,
-        this.context.currentTime
+        Game.context.currentTime
       );
     }
   }

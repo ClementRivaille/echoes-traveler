@@ -29,6 +29,7 @@ export enum Resources {
   hub_d_chirp = 'hub_d_chirp',
   hub_sd_bells = 'hub_sd_bells',
   hub_s_harp = 'hub_s_harp',
+  hub_celtic_clue = 'hub_celtic_clue',
 
   // City
   city_bg = 'city_bg',
@@ -161,6 +162,7 @@ export const musics = new Map<Resources, string>([
   [Resources.hub_d_chirp, 'assets/music/hub/hub_d_chirp.ogg'],
   [Resources.hub_sd_bells, 'assets/music/hub/hub_sd_bells.ogg'],
   [Resources.hub_s_harp, 'assets/music/hub/hub_s_harp.ogg'],
+  [Resources.hub_celtic_clue, 'assets/music/hub/hub_celtic_clue.ogg'],
 
   [Resources.city_bg, 'assets/music/city/city_bg.ogg'],
   [Resources.city_A_melody_cello, 'assets/music/city/city_A-melody_cello.ogg'],

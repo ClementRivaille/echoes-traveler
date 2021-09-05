@@ -1,24 +1,23 @@
+import { Orchestre } from 'orchestre-js';
 import 'phaser';
+import Area from './objects/area';
 import Borders from './objects/Borders';
 import CollisionManager from './objects/collisionManager';
+import Exit from './objects/exit';
+import HintRadio from './objects/hintRadio';
 import Path from './objects/path';
 import Player from './objects/player';
-import Walls from './objects/walls';
-import pathsConfig from './utils/pathsConfig';
-import { images, Resources, musics } from './utils/resources';
-import Exit from './objects/exit';
-import { Orchestre } from 'orchestre-js';
-import { areasConfig, soundEmittersConfig } from './utils/audioConfig';
-import Area from './objects/area';
 import SoundEmitter from './objects/soundEmitter';
-import Instruments from './utils/instruments';
 import World from './objects/world';
+import { areasConfig, soundEmittersConfig } from './utils/audioConfig';
+import Instruments from './utils/instruments';
+import pathsConfig from './utils/pathsConfig';
+import { images, Resources } from './utils/resources';
 import Sounds from './utils/Sounds';
 
 export default class Game extends Phaser.Scene {
   private player: Player;
   private camera: Phaser.Cameras.Scene2D.Camera;
-  private collisionsManager: CollisionManager;
 
   private paths: Path[] = [];
   private pathValidated = 0;
@@ -28,11 +27,14 @@ export default class Game extends Phaser.Scene {
 
   private exit: Exit;
 
-  private orchestre: Orchestre;
   private soundEmitters: SoundEmitter[];
   private instruments: Instruments;
   private sounds: Sounds;
   private world: World;
+
+  public static orchestre: Orchestre;
+  public static collisionsManager: CollisionManager;
+  public static context: AudioContext;
 
   constructor() {
     super('game');
@@ -54,19 +56,17 @@ export default class Game extends Phaser.Scene {
     this.player = new Player(this, 0, 0);
     this.world = new World(this.player);
 
-    this.collisionsManager = new CollisionManager(
+    Game.collisionsManager = new CollisionManager(
       this.physics,
       this.player.sprite
     );
 
-    const context = new AudioContext();
-    this.orchestre = new Orchestre(110, context);
+    Game.context = new AudioContext();
+    Game.orchestre = new Orchestre(110, Game.context);
     const musicLoading: Promise<void>[] = [];
     const areas = areasConfig.map((areaConfig) => {
       const area = new Area(
         this,
-        this.orchestre,
-        this.collisionsManager,
         areaConfig.x,
         areaConfig.y,
         areaConfig.width,
@@ -80,9 +80,6 @@ export default class Game extends Phaser.Scene {
     this.soundEmitters = soundEmittersConfig.map((emitterConfig) => {
       const emitter = new SoundEmitter(
         this,
-        this.collisionsManager,
-        context,
-        this.orchestre,
         this.player,
         emitterConfig.x,
         emitterConfig.y,
@@ -98,12 +95,8 @@ export default class Game extends Phaser.Scene {
     this.sounds = new Sounds();
     musicLoading.push(this.sounds.load());
 
-    await Promise.all(musicLoading);
-    this.orchestre.start();
-    areas[0].activate();
-
     // Debug camera
-    this.camera.startFollow(this.player.sprite);
+    // this.camera.startFollow(this.player.sprite);
 
     // Position paths
     for (const pathConfig of pathsConfig) {
@@ -113,7 +106,6 @@ export default class Game extends Phaser.Scene {
           pathConfig.x,
           pathConfig.y,
           pathConfig.directions,
-          this.collisionsManager,
           this.instruments,
           this.sounds,
           () => this.validatePath()
@@ -126,7 +118,20 @@ export default class Game extends Phaser.Scene {
           Resources.TorchOff
         )
       );
+      if (pathConfig.hint) {
+        const radio = new HintRadio(
+          this,
+          pathConfig.torchX,
+          pathConfig.torchY,
+          pathConfig.hint
+        );
+        musicLoading.push(radio.load());
+      }
     }
+
+    await Promise.all(musicLoading);
+    Game.orchestre.start();
+    areas[0].activate();
 
     const borders = new Borders(this, this.camera.width, this.camera.height);
     this.bordersCollider = this.physics.add.collider(
@@ -136,7 +141,7 @@ export default class Game extends Phaser.Scene {
     // Early exit for debug
     this.bordersCollider.active = false;
 
-    this.exit = new Exit(this, 0, -300, this.collisionsManager);
+    this.exit = new Exit(this, 0, -300, Game.collisionsManager);
 
     this.player.sprite.setDepth(1);
   }
@@ -144,7 +149,7 @@ export default class Game extends Phaser.Scene {
   update() {
     this.player.update();
     this.world.update();
-    this.collisionsManager.update();
+    Game.collisionsManager.update();
     this.soundEmitters.forEach((emitter) => emitter.update());
   }
 
@@ -161,9 +166,7 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  winGame() {
-    console.log(`C'est fini les amis !`);
-  }
+  winGame() {}
 }
 
 const config: Phaser.Types.Core.GameConfig = {

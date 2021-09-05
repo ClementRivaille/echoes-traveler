@@ -1,7 +1,6 @@
 import 'phaser';
-import CollisionManager from './collisionManager';
-import { Resources, musics } from '../utils/resources';
-import { Orchestre } from 'orchestre-js';
+import Game from '../game';
+import { musics, Resources } from '../utils/resources';
 
 export const UNIT = 1024;
 const FADE = 1.5;
@@ -12,8 +11,6 @@ export default class Area {
 
   constructor(
     game: Phaser.Scene,
-    private orchestre: Orchestre,
-    collisonManager: CollisionManager,
     x: number,
     y: number,
     width: number,
@@ -22,13 +19,18 @@ export default class Area {
     measure: number
   ) {
     const zone = game.add.zone(x * UNIT, y * UNIT, width * UNIT, height * UNIT);
-    collisonManager.addOverlap(
+    Game.collisionsManager.addOverlap(
       zone,
       () => this.enter(),
       () => this.exit()
     );
 
-    this.loading = orchestre.addPlayer(music, musics.get(music), measure, true);
+    this.loading = Game.orchestre.addPlayer(
+      music,
+      musics.get(music),
+      measure,
+      true
+    );
   }
 
   public load() {
@@ -36,20 +38,20 @@ export default class Area {
   }
 
   public activate() {
-    if (this.orchestre.started) {
-      this.orchestre.play(this.music, { fade: FADE, now: true });
+    if (Game.orchestre.started) {
+      Game.orchestre.play(this.music, { fade: FADE, now: true });
     }
   }
 
   private enter() {
-    if (this.orchestre.started) {
-      this.orchestre.play(this.music, { fade: FADE, now: true });
+    if (Game.orchestre.started) {
+      Game.orchestre.play(this.music, { fade: FADE, now: true });
     }
   }
 
   private exit() {
-    if (this.orchestre.started) {
-      this.orchestre.stop(this.music, { fade: FADE, now: true });
+    if (Game.orchestre.started) {
+      Game.orchestre.stop(this.music, { fade: FADE, now: true });
     }
   }
 }

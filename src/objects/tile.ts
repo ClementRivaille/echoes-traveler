@@ -1,9 +1,10 @@
 import 'phaser';
+import Game from '../game';
 import { Resources } from '../utils/resources';
 import CollisionManager from './collisionManager';
 
-export const TILE_SIZE = 96;
-const INNER_ZONE_SIZE = TILE_SIZE - 50;
+export const TILE_SIZE = 108;
+const INNER_ZONE_SIZE = TILE_SIZE - 34;
 const STEP_COLOR = 'rgba(100,100,100, 1)';
 
 export enum TileState {
@@ -23,11 +24,10 @@ export default class Tile {
   private state: TileState = TileState.Inactive;
 
   constructor(
-    private game: Phaser.Scene,
+    game: Phaser.Scene,
     private value: number,
     x: number,
     y: number,
-    collisionManager: CollisionManager,
     private onEnterCallback: (value: number, state: TileState) => void,
     private onExitCallback: (value: number, state: TileState) => void
   ) {
@@ -43,12 +43,12 @@ export default class Tile {
     this.text.setOrigin(0.5, 0.5);
 
     game.physics.world.enable(this.zone);
-    collisionManager.addOverlap(
+    Game.collisionsManager.addOverlap(
       this.zone,
       () => {},
       () => this.onExit()
     );
-    collisionManager.addOverlap(
+    Game.collisionsManager.addOverlap(
       this.innerZone,
       () => this.onEnter(),
       () => {}

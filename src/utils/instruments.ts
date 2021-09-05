@@ -1,4 +1,4 @@
-import { Destination, Reverb, Sampler } from 'tone';
+import { Destination, FeedbackDelay, Reverb, Sampler } from 'tone';
 
 export enum InstrumentType {
   Main = 'main',
@@ -30,7 +30,7 @@ export default class Instruments {
         ).connect(mainReverb);
         mainReverb.generate();
         this.instruments[InstrumentType.Main].release = 3;
-        this.instruments[InstrumentType.Main].set({ volume: 6 });
+        this.instruments[InstrumentType.Main].set({ volume: 7 });
       })
     );
 
@@ -40,6 +40,11 @@ export default class Instruments {
           decay: 2,
           wet: 0.4,
         }).toDestination();
+        const secondEcho = new FeedbackDelay({
+          delayTime: 0.2,
+          wet: 0.2,
+          feedback: 0.1,
+        }).connect(secondReverb);
         this.instruments[InstrumentType.Second] = new Sampler(
           {
             D4: 'D4.wav',
@@ -48,7 +53,7 @@ export default class Instruments {
           },
           () => resolve(true),
           './assets/instruments/glass/'
-        ).connect(secondReverb);
+        ).connect(secondEcho);
         secondReverb.generate();
         this.instruments[InstrumentType.Second].release = 3;
         this.instruments[InstrumentType.Second].set({ volume: 6 });
