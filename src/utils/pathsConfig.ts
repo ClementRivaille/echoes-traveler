@@ -5,6 +5,7 @@ import { areasConfig } from './audioConfig';
 import { Resources } from './resources';
 
 interface PahtConfig {
+  id: string;
   x: number;
   y: number;
   directions: Directions[];
@@ -17,6 +18,7 @@ const TORCH_POSITION = 200;
 
 const pathsConfig: PahtConfig[] = [
   {
+    id: 'hub',
     x: -TILE_SIZE,
     y: -TILE_SIZE,
     directions: [
@@ -32,6 +34,7 @@ const pathsConfig: PahtConfig[] = [
     torchY: 0,
   },
   {
+    id: 'desert',
     x: areasConfig[4].x * UNIT,
     y: areasConfig[4].y * UNIT,
     directions: [
@@ -48,6 +51,7 @@ const pathsConfig: PahtConfig[] = [
     hint: [Resources.desert_B_terje, Resources.desert_B_drum],
   },
   {
+    id: 'sea',
     x: (areasConfig[3].x - 1) * UNIT,
     y: (areasConfig[3].y - 0.8) * UNIT,
     directions: [
@@ -64,6 +68,7 @@ const pathsConfig: PahtConfig[] = [
     hint: [Resources.sea_B_synth, Resources.sea_C_oboe],
   },
   {
+    id: 'city',
     x: (areasConfig[1].x - 0.4) * UNIT,
     y: (areasConfig[1].y - 2.3) * UNIT,
     directions: [
@@ -80,6 +85,7 @@ const pathsConfig: PahtConfig[] = [
     hint: [Resources.city_A_melody_vibra, Resources.city_marimba_rtm_A],
   },
   {
+    id: 'celtic',
     x: (areasConfig[2].x + 2) * UNIT,
     y: (areasConfig[2].y + 0.2) * UNIT,
     directions: [

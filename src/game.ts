@@ -5,6 +5,7 @@ import Borders from './objects/Borders';
 import CollisionManager from './objects/collisionManager';
 import Exit from './objects/exit';
 import HintRadio from './objects/hintRadio';
+import Indicator from './objects/indicator';
 import Path from './objects/path';
 import Player from './objects/player';
 import SoundEmitter from './objects/soundEmitter';
@@ -21,7 +22,7 @@ export default class Game extends Phaser.Scene {
 
   private paths: Path[] = [];
   private pathValidated = 0;
-  private torchs: Phaser.GameObjects.Sprite[] = [];
+  private indicators: Indicator[] = [];
 
   private bordersCollider: Phaser.Physics.Arcade.Collider;
 
@@ -105,27 +106,22 @@ export default class Game extends Phaser.Scene {
           this,
           pathConfig.x,
           pathConfig.y,
+          pathConfig.id,
           pathConfig.directions,
           this.instruments,
           this.sounds,
-          () => this.validatePath()
+          (id) => this.validatePath(id)
         )
       );
-      this.torchs.push(
-        this.add.sprite(
-          pathConfig.torchX,
-          pathConfig.torchY,
-          Resources.TorchOff
-        )
+      const indicator = new Indicator(this,
+        pathConfig.torchX,
+        pathConfig.torchY,
+        pathConfig.id,
+        pathConfig.hint
       );
+      this.indicators.push(indicator);
       if (pathConfig.hint) {
-        const radio = new HintRadio(
-          this,
-          pathConfig.torchX,
-          pathConfig.torchY,
-          pathConfig.hint
-        );
-        musicLoading.push(radio.load());
+        musicLoading.push(indicator.load());
       }
     }
 
@@ -153,8 +149,11 @@ export default class Game extends Phaser.Scene {
     this.soundEmitters.forEach((emitter) => emitter.update());
   }
 
-  private validatePath() {
-    this.torchs[this.pathValidated].setTexture(Resources.TorchOn);
+  private validatePath(id: string) {
+    const indicator = this.indicators.find(indic => indic.id === id);
+    if (indicator) {
+      indicator.validate();
+    }
     this.pathValidated += 1;
 
     if (this.pathValidated === this.paths.length) {

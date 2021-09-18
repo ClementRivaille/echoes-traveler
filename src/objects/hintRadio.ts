@@ -21,6 +21,10 @@ export default class HintRadio {
   });
   private loading: Array<Promise<void>> = [];
 
+  public onEnter?: () => void;
+  public onExit?: () => void;
+  public activated = true;
+
   constructor(
     private game: Phaser.Scene,
     x: number,
@@ -82,16 +86,26 @@ export default class HintRadio {
   }
 
   private enter() {
+    if (!this.activated) return;
+
     this.whiteNoise.start();
     for (const soundName of this.soundNames) {
       Game.orchestre.play(soundName, { now: true, fade: 0.2 });
     }
+    if (this.onEnter) {
+      this.onEnter();
+    }
   }
 
   private exit() {
+    if (!this.activated) return;
+    
     this.whiteNoise.stop();
     for (const soundName of this.soundNames) {
       Game.orchestre.stop(soundName, { now: true, fade: 0.2 });
+    }
+    if (this.onExit) {
+      this.onExit();
     }
   }
 }

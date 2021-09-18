@@ -31,10 +31,11 @@ export default class Path {
     game: Phaser.Scene,
     x: number,
     y: number,
+    private id: string,
     directions: Directions[],
     private instruments: Instruments,
     private sounds: Sounds,
-    private onValidateCallback: () => void
+    private onValidateCallback: (id: string) => void
   ) {
     const firstTile = new Tile(
       game,
@@ -176,6 +177,6 @@ export default class Path {
     this.state = PathState.Validated;
     this.tiles[this.step].setState(TileState.Validated);
     this.sounds.play(Resources.ValidatePath);
-    this.onValidateCallback();
+    this.onValidateCallback(this.id);
   }
 }
