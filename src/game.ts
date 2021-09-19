@@ -24,7 +24,7 @@ export default class Game extends Phaser.Scene {
   private pathValidated = 0;
   private indicators: Indicator[] = [];
 
-  private bordersCollider: Phaser.Physics.Arcade.Collider;
+  private borders: Borders;
 
   private exit: Exit;
 
@@ -113,7 +113,8 @@ export default class Game extends Phaser.Scene {
           (id) => this.validatePath(id)
         )
       );
-      const indicator = new Indicator(this,
+      const indicator = new Indicator(
+        this,
         pathConfig.torchX,
         pathConfig.torchY,
         pathConfig.id,
@@ -125,19 +126,20 @@ export default class Game extends Phaser.Scene {
       }
     }
 
+    this.borders = new Borders(
+      this,
+      this.camera.width,
+      this.camera.height,
+      this.player.sprite,
+      () => this.onBorderCollide()
+    );
+
+    this.exit = new Exit(this, 0, -300, Game.collisionsManager);
+
+    // ------------LOADING --------------------
     await Promise.all(musicLoading);
     Game.orchestre.start();
     areas[0].activate();
-
-    const borders = new Borders(this, this.camera.width, this.camera.height);
-    this.bordersCollider = this.physics.add.collider(
-      borders.group,
-      this.player.sprite
-    );
-    // Early exit for debug
-    this.bordersCollider.active = false;
-
-    this.exit = new Exit(this, 0, -300, Game.collisionsManager);
 
     this.player.sprite.setDepth(1);
   }
@@ -150,7 +152,7 @@ export default class Game extends Phaser.Scene {
   }
 
   private validatePath(id: string) {
-    const indicator = this.indicators.find(indic => indic.id === id);
+    const indicator = this.indicators.find((indic) => indic.id === id);
     if (indicator) {
       indicator.validate();
     }
@@ -161,11 +163,16 @@ export default class Game extends Phaser.Scene {
     }
 
     if (this.pathValidated === 1) {
-      this.bordersCollider.active = false;
+      this.borders.desactivate();
     }
   }
 
-  winGame() {}
+  private onBorderCollide() {
+    this.sounds.play(Resources.Block);
+    this.indicators[0].blink();
+  }
+
+  private winGame() {}
 }
 
 const config: Phaser.Types.Core.GameConfig = {

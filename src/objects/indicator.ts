@@ -1,5 +1,6 @@
-import { Resources } from "../utils/resources";
-import HintRadio from './hintRadio'
+import { yieldTimeout } from '../utils/animation';
+import { Resources } from '../utils/resources';
+import HintRadio from './hintRadio';
 
 const GREY = 0x8ab7b4;
 const RED = 0xe93a60;
@@ -7,12 +8,17 @@ const BLUE = 0x47ebf7;
 const GREEN = 0xc6f78f;
 
 export default class Indicator {
-
-  private colorLight: Phaser.GameObjects.Sprite
+  private colorLight: Phaser.GameObjects.Sprite;
   private radio?: HintRadio;
   private validated = false;
 
-  constructor(game: Phaser.Scene, x: number, y: number, public id: string, hint?: Resources[]) {
+  constructor(
+    game: Phaser.Scene,
+    x: number,
+    y: number,
+    public id: string,
+    hint?: Resources[]
+  ) {
     this.colorLight = game.add.sprite(x, y, Resources.IndicatorLightColor);
     const panel = game.add.sprite(x, y, Resources.IndicatorLight);
 
@@ -22,11 +28,7 @@ export default class Indicator {
     this.colorLight.tint = GREY;
 
     if (hint) {
-      this.radio = new HintRadio(
-        game,
-        x, y,
-        hint,
-      );
+      this.radio = new HintRadio(game, x, y, hint);
       this.radio.onEnter = () => this.setRadioState(true);
       this.radio.onExit = () => this.setRadioState(false);
     }
@@ -39,7 +41,21 @@ export default class Indicator {
   public validate() {
     this.colorLight.tint = GREEN;
     this.validated = true;
-    this.radio.activated = false;
+    if (this.radio) {
+      this.radio.activated = false;
+    }
+  }
+
+  public async blink() {
+    const amount = 3;
+    const delay = 120;
+
+    for (const _i of Array(amount)) {
+      this.colorLight.tint = RED;
+      await yieldTimeout(delay);
+      this.colorLight.tint = GREY;
+      await yieldTimeout(delay);
+    }
   }
 
   private setRadioState(value: boolean) {

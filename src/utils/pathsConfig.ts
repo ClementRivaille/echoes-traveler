@@ -14,7 +14,7 @@ interface PahtConfig {
   hint?: Resources[];
 }
 
-const TORCH_POSITION = 200;
+const TORCH_POSITION = 250;
 
 const pathsConfig: PahtConfig[] = [
   {

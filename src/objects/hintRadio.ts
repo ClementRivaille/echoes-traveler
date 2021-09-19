@@ -4,7 +4,7 @@ import Game from '../game';
 import { soundEmittersConfig } from '../utils/audioConfig';
 import { musics, Resources } from '../utils/resources';
 
-const RANGE = 50;
+const RANGE = 80;
 const HIGH_FILTER_OPTIONS = {
   frequency: 1800,
   type: 'highpass' as BiquadFilterType,
@@ -99,7 +99,7 @@ export default class HintRadio {
 
   private exit() {
     if (!this.activated) return;
-    
+
     this.whiteNoise.stop();
     for (const soundName of this.soundNames) {
       Game.orchestre.stop(soundName, { now: true, fade: 0.2 });
