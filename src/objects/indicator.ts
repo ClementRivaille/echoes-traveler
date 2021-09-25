@@ -7,6 +7,8 @@ const RED = 0xe93a60;
 const BLUE = 0x47ebf7;
 const GREEN = 0xc6f78f;
 
+const SIZE = 46;
+
 export default class Indicator {
   private colorLight: Phaser.GameObjects.Sprite;
   private radio?: HintRadio;
@@ -22,8 +24,10 @@ export default class Indicator {
     this.colorLight = game.add.sprite(x, y, Resources.IndicatorLightColor);
     const panel = game.add.sprite(x, y, Resources.IndicatorLight);
 
-    this.colorLight.scale = 0.6;
-    panel.scale = 0.6;
+    this.colorLight.displayWidth = SIZE;
+    this.colorLight.displayHeight = SIZE;
+    panel.displayWidth = SIZE;
+    panel.displayHeight = SIZE;
 
     this.colorLight.tint = GREY;
 

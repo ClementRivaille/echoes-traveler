@@ -37,7 +37,7 @@ export default class Tile {
     this.zone = game.add.zone(x, y, TILE_SIZE, TILE_SIZE);
     this.innerZone = game.add.zone(x, y, INNER_ZONE_SIZE, INNER_ZONE_SIZE);
     this.text = game.add.text(x, y, `${value}`, {
-      fontSize: 40,
+      fontSize: '40px',
       align: 'center',
     });
     this.text.setOrigin(0.5, 0.5);
