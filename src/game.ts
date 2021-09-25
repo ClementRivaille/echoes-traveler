@@ -181,10 +181,12 @@ const config: Phaser.Types.Core.GameConfig = {
   width: 1024,
   height: 800,
   scene: Game,
+  pixelArt: true,
+  // zoom: 0.5,
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true,
+      // debug: true,
     },
   },
 };

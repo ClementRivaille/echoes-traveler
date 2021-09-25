@@ -3,14 +3,21 @@ export enum Resources {
 
   Background = 'background',
   Player = 'player',
-  TileNeutral = 'tileNeutral',
-  TileValidating = 'TileValidating',
-  TileValidated = 'TileValidated',
   IndicatorLight = 'IndicatorLight',
   IndicatorLightColor = 'IndicatorLightColor',
   Wall = 'Wall',
   ExitClosed = 'ExitClosed',
   ExitOpen = 'ExitOpen',
+  TileShape = 'TileShape',
+  TileFill = 'TileFill',
+  TileNumber1 = 'TileNumber1',
+  TileNumber2 = 'TileNumber2',
+  TileNumber3 = 'TileNumber3',
+  TileNumber4 = 'TileNumber4',
+  TileNumber5 = 'TileNumber5',
+  TileNumber6 = 'TileNumber6',
+  TileNumber7 = 'TileNumber7',
+  TileNumber8 = 'TileNumber8',
 
   // ---- SOUNDS ----
 
@@ -139,14 +146,21 @@ export enum Resources {
 export const images = new Map<Resources, string>([
   [Resources.Background, 'assets/sprites/background.png'],
   [Resources.Player, 'assets/sprites/player.png'],
-  [Resources.TileNeutral, 'assets/sprites/tile.png'],
-  [Resources.TileValidating, 'assets/sprites/tile_validating.png'],
-  [Resources.TileValidated, 'assets/sprites/tile_validated.png'],
   [Resources.IndicatorLight, 'assets/sprites/light_base.png'],
   [Resources.IndicatorLightColor, 'assets/sprites/light_color.png'],
   [Resources.Wall, 'assets/sprites/wall.png'],
   [Resources.ExitClosed, 'assets/sprites/exit_closed.png'],
   [Resources.ExitOpen, 'assets/sprites/exit_open.png'],
+  [Resources.TileShape, 'assets/sprites/tiles/tile_shape.png'],
+  [Resources.TileFill, 'assets/sprites/tiles/tile_fill.png'],
+  [Resources.TileNumber1, 'assets/sprites/tiles/tile_number_1.png'],
+  [Resources.TileNumber2, 'assets/sprites/tiles/tile_number_2.png'],
+  [Resources.TileNumber3, 'assets/sprites/tiles/tile_number_3.png'],
+  [Resources.TileNumber4, 'assets/sprites/tiles/tile_number_4.png'],
+  [Resources.TileNumber5, 'assets/sprites/tiles/tile_number_5.png'],
+  [Resources.TileNumber6, 'assets/sprites/tiles/tile_number_6.png'],
+  [Resources.TileNumber7, 'assets/sprites/tiles/tile_number_7.png'],
+  [Resources.TileNumber8, 'assets/sprites/tiles/tile_number_8.png'],
 ]);
 
 export const sounds = new Map<Resources, string>([

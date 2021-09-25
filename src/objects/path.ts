@@ -79,6 +79,7 @@ export default class Path {
       if (state === TileState.Inactive && value === this.step + 1) {
         // End path
         if (value === this.tiles.length) {
+          this.state = PathState.Validated
           this.validate();
         }
         // Path in validation
@@ -87,7 +88,7 @@ export default class Path {
         }
 
         // Validate previous tile
-        if (this.step > 0) {
+        if (this.step > 0 && this.state !== PathState.Validated) {
           this.tiles[this.step - 1].setState(TileState.Validated);
         }
         this.step += 1;
@@ -123,10 +124,16 @@ export default class Path {
         this.state === PathState.Validation &&
         [TileState.Validated, TileState.Validation].includes(state)
       ) {
+        // Walking on previous tile
         this.instruments.play(
           NOTES[(value - 1) % NOTES.length],
           InstrumentType.Second
         );
+        const previousTile = this.tiles.find(tile => tile.getState() === TileState.Validation)
+        if (previousTile) {
+          previousTile.setState(TileState.Validated)
+        }
+        this.tiles[value - 1].setState(TileState.Validation);
       }
 
       // Step on a latter tile while inactive
@@ -175,7 +182,7 @@ export default class Path {
 
   private validate() {
     this.state = PathState.Validated;
-    this.tiles[this.step].setState(TileState.Validated);
+    this.tiles.forEach(tile => tile.setState(TileState.Completed))
     this.sounds.play(Resources.ValidatePath);
     this.onValidateCallback(this.id);
   }
