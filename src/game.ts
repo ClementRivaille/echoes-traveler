@@ -4,7 +4,6 @@ import Area from './objects/area';
 import Borders from './objects/Borders';
 import CollisionManager from './objects/collisionManager';
 import Exit from './objects/exit';
-import HintRadio from './objects/hintRadio';
 import Indicator from './objects/indicator';
 import Path from './objects/path';
 import Player from './objects/player';
@@ -25,8 +24,6 @@ export default class Game extends Phaser.Scene {
   private indicators: Indicator[] = [];
 
   private borders: Borders;
-
-  private exit: Exit;
 
   private soundEmitters: SoundEmitter[];
   private instruments: Instruments;
@@ -52,7 +49,8 @@ export default class Game extends Phaser.Scene {
     this.camera.scrollX = -this.camera.centerX;
     this.camera.scrollY = -this.camera.centerY;
 
-    this.add.sprite(0, 0, Resources.Background);
+    const background = this.add.sprite(0, 0, Resources.Background);
+    background.scale = 3.4
 
     this.player = new Player(this, 0, 0);
     this.world = new World(this.player);
@@ -134,8 +132,6 @@ export default class Game extends Phaser.Scene {
       () => this.onBorderCollide()
     );
 
-    this.exit = new Exit(this, 0, -300, Game.collisionsManager);
-
     // ------------LOADING --------------------
     await Promise.all(musicLoading);
     Game.orchestre.start();
@@ -159,7 +155,7 @@ export default class Game extends Phaser.Scene {
     this.pathValidated += 1;
 
     if (this.pathValidated === this.paths.length) {
-      this.exit.open(() => this.winGame());
+      // TODO: end game
     }
 
     if (this.pathValidated === 1) {
@@ -172,7 +168,7 @@ export default class Game extends Phaser.Scene {
     this.indicators[0].blink();
   }
 
-  private winGame() {}
+  private winGame() { }
 }
 
 const config: Phaser.Types.Core.GameConfig = {

@@ -18,7 +18,7 @@ const NUMBER_SPRITES: Resources[] = [
 ]
 
 const ACTIVE_COLOR = 0x7fe155; // light green
-const FILL_COLOR = 0x62e1e5; // light blue
+const FILL_COLOR = 0x3d9edd; // light blue
 const COMPLETE_COLOR = 0x2ebf23; // green
 
 const ACTIVATION_DELAY = 200;
