@@ -17,9 +17,11 @@ const NUMBER_SPRITES: Resources[] = [
   Resources.TileNumber8,
 ];
 
-const ACTIVE_COLOR = 0x7fe155; // light green
-const FILL_COLOR = 0x3d9edd; // light blue
-const COMPLETE_COLOR = 0x2ebf23; // green
+const ACTIVE_COLOR = 0x8ae177; // light green
+const FILL_COLOR = 0x09c4ad; // light cyan
+const VALIDATED_COLOR = 0x0f423e; // dark cyan
+const COMPLETE_COLOR = 0xced001; // yellow
+const COMPLETE_FILL = 0xb5b600; // orange
 
 const ACTIVATION_DELAY = 200;
 const FADE_OUT_DELAY = 4000;
@@ -125,11 +127,11 @@ export default class Tile {
         });
       }
       this.fill.tint = FILL_COLOR;
-      this.shape.tint = this.steppedOn ? ACTIVE_COLOR : 0xffffff;
-      this.number.tint = this.steppedOn ? ACTIVE_COLOR : 0xffffff;
+      this.shape.tint = this.steppedOn ? ACTIVE_COLOR : VALIDATED_COLOR;
+      this.number.tint = this.steppedOn ? ACTIVE_COLOR : VALIDATED_COLOR;
     } else if (newState === TileState.Validated) {
-      this.shape.tint = 0xffffff;
-      this.number.tint = 0xffffff;
+      this.shape.tint = VALIDATED_COLOR;
+      this.number.tint = VALIDATED_COLOR;
       this.shape.alpha = 0.7;
       this.number.alpha = 0.7;
     } else if (newState === TileState.Completed) {
@@ -141,9 +143,9 @@ export default class Tile {
           duration: ACTIVATION_DELAY,
         });
       }
-      this.shape.tint = ACTIVE_COLOR;
-      this.number.tint = ACTIVE_COLOR;
-      this.fill.tint = COMPLETE_COLOR;
+      this.shape.tint = COMPLETE_COLOR;
+      this.number.tint = COMPLETE_COLOR;
+      this.fill.tint = COMPLETE_FILL;
       this.game.tweens.add({
         targets: [this.shape, this.number, this.fill],
         alpha: 0,

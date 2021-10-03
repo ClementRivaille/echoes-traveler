@@ -57,6 +57,9 @@ export default class Game extends Phaser.Scene {
 
     const background = this.add.sprite(0, 0, Resources.Background);
     background.scale = 3.4;
+    const trees = this.add.sprite(0, 0, Resources.TreeShadows);
+    trees.scale = 3.4;
+    trees.setDepth(2);
 
     this.player = new Player(this, 0, 0);
     this.world = new World(this.player);

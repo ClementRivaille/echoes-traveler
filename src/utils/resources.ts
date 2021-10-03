@@ -2,6 +2,7 @@ export enum Resources {
   // ---- SPRITES ----
 
   Background = 'background',
+  TreeShadows = 'TreeShadows',
   IndicatorLight = 'IndicatorLight',
   IndicatorLightColor = 'IndicatorLightColor',
   TileShape = 'TileShape',
@@ -143,6 +144,7 @@ export enum Resources {
 
 export const images = new Map<Resources, string>([
   [Resources.Background, 'assets/sprites/background.png'],
+  [Resources.TreeShadows, 'assets/sprites/tree_shadows.png'],
   [Resources.IndicatorLight, 'assets/sprites/light_base.png'],
   [Resources.IndicatorLightColor, 'assets/sprites/light_color.png'],
   [Resources.TileShape, 'assets/sprites/tiles/tile_shape.png'],

@@ -2,8 +2,8 @@ import { yieldTimeout } from '../utils/animation';
 import { Resources } from '../utils/resources';
 import HintRadio from './hintRadio';
 
-const GREY = 0x8ab7b4;
-const RED = 0xe93a60;
+const GREY = 0x9b9b9b;
+const RED = 0xda2657;
 const BLUE = 0x47ebf7;
 const GREEN = 0xc6f78f;
 
