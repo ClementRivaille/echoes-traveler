@@ -3,7 +3,7 @@ import 'phaser';
 import Area from './objects/area';
 import Borders from './objects/Borders';
 import CollisionManager from './objects/collisionManager';
-import Exit from './objects/exit';
+import { FRAME_HEIGHT, FRAME_WIDTH } from './objects/ghostSprite';
 import Indicator from './objects/indicator';
 import Path from './objects/path';
 import Player from './objects/player';
@@ -12,7 +12,7 @@ import World from './objects/world';
 import { areasConfig, soundEmittersConfig } from './utils/audioConfig';
 import Instruments from './utils/instruments';
 import pathsConfig from './utils/pathsConfig';
-import { images, Resources } from './utils/resources';
+import { images, Resources, sprites } from './utils/resources';
 import Sounds from './utils/Sounds';
 
 export default class Game extends Phaser.Scene {
@@ -42,6 +42,12 @@ export default class Game extends Phaser.Scene {
     for (const image of images.keys()) {
       this.load.image(image, images.get(image));
     }
+    for (const sprite of sprites.keys()) {
+      this.load.spritesheet(sprite, sprites.get(sprite), {
+        frameWidth: FRAME_WIDTH,
+        frameHeight: FRAME_HEIGHT,
+      });
+    }
   }
 
   async create() {
@@ -50,14 +56,14 @@ export default class Game extends Phaser.Scene {
     this.camera.scrollY = -this.camera.centerY;
 
     const background = this.add.sprite(0, 0, Resources.Background);
-    background.scale = 3.4
+    background.scale = 3.4;
 
     this.player = new Player(this, 0, 0);
     this.world = new World(this.player);
 
     Game.collisionsManager = new CollisionManager(
       this.physics,
-      this.player.sprite
+      this.player.sprite.object
     );
 
     Game.context = new AudioContext();
@@ -128,7 +134,7 @@ export default class Game extends Phaser.Scene {
       this,
       this.camera.width,
       this.camera.height,
-      this.player.sprite,
+      this.player.sprite.object,
       () => this.onBorderCollide()
     );
 
@@ -168,7 +174,7 @@ export default class Game extends Phaser.Scene {
     this.indicators[0].blink();
   }
 
-  private winGame() { }
+  private winGame() {}
 }
 
 const config: Phaser.Types.Core.GameConfig = {
@@ -177,7 +183,9 @@ const config: Phaser.Types.Core.GameConfig = {
   width: 1024,
   height: 800,
   scene: Game,
-  pixelArt: true,
+  render: {
+    pixelArt: true,
+  },
   // zoom: 0.5,
   physics: {
     default: 'arcade',

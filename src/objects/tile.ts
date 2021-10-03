@@ -14,8 +14,8 @@ const NUMBER_SPRITES: Resources[] = [
   Resources.TileNumber5,
   Resources.TileNumber6,
   Resources.TileNumber7,
-  Resources.TileNumber8
-]
+  Resources.TileNumber8,
+];
 
 const ACTIVE_COLOR = 0x7fe155; // light green
 const FILL_COLOR = 0x3d9edd; // light blue
@@ -29,7 +29,7 @@ export enum TileState {
   Hint,
   Validation,
   Validated,
-  Completed
+  Completed,
 }
 
 export default class Tile {
@@ -51,9 +51,9 @@ export default class Tile {
     private onEnterCallback: (value: number, state: TileState) => void,
     private onExitCallback: (value: number, state: TileState) => void
   ) {
-    this.fill = this.initSprite(game, x, y, Resources.TileFill)
-    this.shape = this.initSprite(game, x, y, Resources.TileShape)
-    this.number = this.initSprite(game, x, y, NUMBER_SPRITES[value])
+    this.fill = this.initSprite(game, x, y, Resources.TileFill);
+    this.shape = this.initSprite(game, x, y, Resources.TileShape);
+    this.number = this.initSprite(game, x, y, NUMBER_SPRITES[value]);
 
     this.zone = game.add.zone(x, y, TILE_SIZE, TILE_SIZE);
     this.innerZone = game.add.zone(x, y, INNER_ZONE_SIZE, INNER_ZONE_SIZE);
@@ -61,17 +61,22 @@ export default class Tile {
     game.physics.world.enable(this.zone);
     Game.collisionsManager.addOverlap(
       this.zone,
-      () => { },
+      () => {},
       () => this.onExit()
     );
     Game.collisionsManager.addOverlap(
       this.innerZone,
       () => this.onEnter(),
-      () => { }
+      () => {}
     );
   }
 
-  private initSprite(game: Phaser.Scene, x: number, y: number, res: Resources): Phaser.GameObjects.Sprite {
+  private initSprite(
+    game: Phaser.Scene,
+    x: number,
+    y: number,
+    res: Resources
+  ): Phaser.GameObjects.Sprite {
     const sprite = game.add.sprite(x, y, res);
     sprite.displayWidth = TILE_SIZE;
     sprite.displayHeight = TILE_SIZE;
@@ -80,8 +85,10 @@ export default class Tile {
   }
 
   private onEnter() {
-    this.steppedOn = true;
-    this.onEnterCallback(this.value, this.state);
+    if (!this.steppedOn) {
+      this.steppedOn = true;
+      this.onEnterCallback(this.value, this.state);
+    }
   }
 
   private onExit() {
@@ -95,29 +102,29 @@ export default class Tile {
         targets: [this.shape, this.number, this.fill],
         alpha: 0,
         ease: 'Sine.easeIn',
-        duration: ACTIVATION_DELAY
-      })
+        duration: ACTIVATION_DELAY,
+      });
     } else if (newState === TileState.Hint) {
       if (this.shape.alpha < 1) {
         this.game.tweens.add({
-          targets: [this.shape, this.number,],
+          targets: [this.shape, this.number],
           alpha: 1,
           ease: 'Sine.easeInOut',
-          duration: ACTIVATION_DELAY
-        })
+          duration: ACTIVATION_DELAY,
+        });
       }
-      this.shape.tint = ACTIVE_COLOR
-      this.number.tint = ACTIVE_COLOR
+      this.shape.tint = ACTIVE_COLOR;
+      this.number.tint = ACTIVE_COLOR;
     } else if (newState === TileState.Validation) {
       if (this.shape.alpha < 1) {
         this.game.tweens.add({
           targets: [this.shape, this.number, this.fill],
           alpha: 1,
           ease: 'Sine.easeInOut',
-          duration: ACTIVATION_DELAY
-        })
+          duration: ACTIVATION_DELAY,
+        });
       }
-      this.fill.tint = FILL_COLOR
+      this.fill.tint = FILL_COLOR;
       this.shape.tint = this.steppedOn ? ACTIVE_COLOR : 0xffffff;
       this.number.tint = this.steppedOn ? ACTIVE_COLOR : 0xffffff;
     } else if (newState === TileState.Validated) {
@@ -125,15 +132,14 @@ export default class Tile {
       this.number.tint = 0xffffff;
       this.shape.alpha = 0.7;
       this.number.alpha = 0.7;
-    }
-    else if (newState === TileState.Completed) {
+    } else if (newState === TileState.Completed) {
       if (this.shape.alpha < 1) {
         this.game.tweens.add({
           targets: [this.shape, this.number, this.fill],
           alpha: 1,
           ease: 'Sine.easeInOut',
-          duration: ACTIVATION_DELAY
-        })
+          duration: ACTIVATION_DELAY,
+        });
       }
       this.shape.tint = ACTIVE_COLOR;
       this.number.tint = ACTIVE_COLOR;
@@ -143,12 +149,12 @@ export default class Tile {
         alpha: 0,
         duration: FADE_OUT_DELAY,
         delay: ACTIVATION_DELAY,
-        ease: "Sine.easeIn"
-      })
+        ease: 'Sine.easeIn',
+      });
     }
 
     this.state = newState;
-    }
+  }
 
   public isSteppedOn() {
     return this.steppedOn;

@@ -13,7 +13,7 @@ export default class Borders {
     game: Phaser.Scene,
     width,
     height,
-    player: Phaser.GameObjects.Sprite,
+    player: Phaser.GameObjects.GameObject,
     private onCollide: () => void
   ) {
     this.group = game.physics.add.staticGroup();

@@ -2,12 +2,8 @@ export enum Resources {
   // ---- SPRITES ----
 
   Background = 'background',
-  Player = 'player',
   IndicatorLight = 'IndicatorLight',
   IndicatorLightColor = 'IndicatorLightColor',
-  Wall = 'Wall',
-  ExitClosed = 'ExitClosed',
-  ExitOpen = 'ExitOpen',
   TileShape = 'TileShape',
   TileFill = 'TileFill',
   TileNumber1 = 'TileNumber1',
@@ -18,6 +14,8 @@ export enum Resources {
   TileNumber6 = 'TileNumber6',
   TileNumber7 = 'TileNumber7',
   TileNumber8 = 'TileNumber8',
+  Shadow = 'shadow',
+  GhostSpritesheet = 'GhostSpritesheet',
 
   // ---- SOUNDS ----
 
@@ -145,12 +143,8 @@ export enum Resources {
 
 export const images = new Map<Resources, string>([
   [Resources.Background, 'assets/sprites/background.png'],
-  [Resources.Player, 'assets/sprites/player.png'],
   [Resources.IndicatorLight, 'assets/sprites/light_base.png'],
   [Resources.IndicatorLightColor, 'assets/sprites/light_color.png'],
-  [Resources.Wall, 'assets/sprites/wall.png'],
-  [Resources.ExitClosed, 'assets/sprites/exit_closed.png'],
-  [Resources.ExitOpen, 'assets/sprites/exit_open.png'],
   [Resources.TileShape, 'assets/sprites/tiles/tile_shape.png'],
   [Resources.TileFill, 'assets/sprites/tiles/tile_fill.png'],
   [Resources.TileNumber1, 'assets/sprites/tiles/tile_number_1.png'],
@@ -161,6 +155,11 @@ export const images = new Map<Resources, string>([
   [Resources.TileNumber6, 'assets/sprites/tiles/tile_number_6.png'],
   [Resources.TileNumber7, 'assets/sprites/tiles/tile_number_7.png'],
   [Resources.TileNumber8, 'assets/sprites/tiles/tile_number_8.png'],
+  [Resources.Shadow, 'assets/sprites/ghost/shadow.png'],
+]);
+
+export const sprites = new Map<Resources, string>([
+  [Resources.GhostSpritesheet, 'assets/sprites/ghost/ghost_spritesheet.png'],
 ]);
 
 export const sounds = new Map<Resources, string>([

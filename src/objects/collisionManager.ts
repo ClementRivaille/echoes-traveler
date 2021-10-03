@@ -11,7 +11,7 @@ export default class CollisionManager {
 
   constructor(
     private physics: Phaser.Physics.Arcade.ArcadePhysics,
-    private playerBody: Phaser.Physics.Arcade.Sprite
+    private playerBody: Phaser.GameObjects.GameObject
   ) {}
 
   addOverlap(
@@ -24,7 +24,7 @@ export default class CollisionManager {
     this.zonesEvents.push({
       zoneBody: zone.body as Phaser.Physics.Arcade.Body,
       onEnter,
-      onExit
+      onExit,
     });
   }
 

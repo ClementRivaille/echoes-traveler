@@ -1,14 +1,20 @@
 import 'phaser';
 import { Resources } from '../utils/resources';
+import GhostSprite, {
+  AnimationDirection,
+  GhostAnimations,
+} from './ghostSprite';
 
 const SPEED = 170;
 
 export default class Player {
-  public sprite: Phaser.Physics.Arcade.Sprite;
+  public sprite: GhostSprite;
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  private direction: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 1);
+
   constructor(private game: Phaser.Scene, x: number, y: number) {
-    this.sprite = game.physics.add.sprite(x, y, Resources.Player);
+    this.sprite = new GhostSprite(game, x, y);
     this.cursors = game.input.keyboard.createCursorKeys();
   }
 
@@ -17,7 +23,7 @@ export default class Player {
   }
 
   private move() {
-    this.sprite.setVelocity(0);
+    this.sprite.body.setVelocity(0);
 
     const direction = new Phaser.Math.Vector2(0, 0);
 
@@ -33,7 +39,39 @@ export default class Player {
     }
 
     const velocity = direction.normalize().scale(SPEED);
-    this.sprite.setVelocity(velocity.x, velocity.y);
+    this.sprite.body.setVelocity(velocity.x, velocity.y);
+
+    // Animation
+    if (velocity.length() > 0) {
+      this.direction = velocity;
+      const animDirection =
+        this.direction.x === 0
+          ? AnimationDirection.none
+          : this.direction.x > 0
+          ? AnimationDirection.right
+          : AnimationDirection.left;
+      const animation =
+        this.direction.x !== 0
+          ? GhostAnimations.WalkSide
+          : this.direction.y > 0
+          ? GhostAnimations.WalkFront
+          : GhostAnimations.WalkBack;
+      this.sprite.playAnimation(animation, animDirection);
+    } else {
+      const animDirection =
+        this.direction.x === 0
+          ? AnimationDirection.none
+          : this.direction.x > 0
+          ? AnimationDirection.right
+          : AnimationDirection.left;
+      const animation =
+        this.direction.x !== 0
+          ? GhostAnimations.IdleSide
+          : this.direction.y > 0
+          ? GhostAnimations.IdleFront
+          : GhostAnimations.IdleBack;
+      this.sprite.playAnimation(animation, animDirection);
+    }
   }
 
   public getPosition() {
