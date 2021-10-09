@@ -16,6 +16,8 @@ export default class Player {
   constructor(private game: Phaser.Scene, x: number, y: number) {
     this.sprite = new GhostSprite(game, x, y);
     this.cursors = game.input.keyboard.createCursorKeys();
+
+    this.sprite.setDepth(-1);
   }
 
   public update() {

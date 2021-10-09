@@ -14,10 +14,23 @@ import Instruments from './utils/instruments';
 import pathsConfig from './utils/pathsConfig';
 import { images, Resources, sprites } from './utils/resources';
 import Sounds from './utils/Sounds';
+import UI from './objects/ui';
+import { loadFonts } from './utils/fonts';
+import { StateTimeline } from 'tone';
+
+enum GameState {
+  Preload,
+  Title,
+  Loading,
+  Playing,
+  Ending,
+  Credits,
+}
 
 export default class Game extends Phaser.Scene {
   private player: Player;
   private camera: Phaser.Cameras.Scene2D.Camera;
+  private ui: UI;
 
   private paths: Path[] = [];
   private pathValidated = 0;
@@ -29,10 +42,14 @@ export default class Game extends Phaser.Scene {
   private instruments: Instruments;
   private sounds: Sounds;
   private world: World;
+  private areas: Area[];
 
   public static orchestre: Orchestre;
   public static collisionsManager: CollisionManager;
   public static context: AudioContext;
+
+  private state: GameState = GameState.Preload;
+  private loaded = false;
 
   constructor() {
     super('game');
@@ -51,9 +68,14 @@ export default class Game extends Phaser.Scene {
   }
 
   async create() {
+    const resourcesLoading: Promise<void>[] = [];
+    this.ui = new UI(this);
+
     this.camera = this.cameras.main;
     this.camera.scrollX = -this.camera.centerX;
     this.camera.scrollY = -this.camera.centerY;
+
+    resourcesLoading.push(this.loadTitle());
 
     const background = this.add.sprite(0, 0, Resources.Background);
     background.scale = 3.4;
@@ -71,8 +93,7 @@ export default class Game extends Phaser.Scene {
 
     Game.context = new AudioContext();
     Game.orchestre = new Orchestre(110, Game.context);
-    const musicLoading: Promise<void>[] = [];
-    const areas = areasConfig.map((areaConfig) => {
+    this.areas = areasConfig.map((areaConfig) => {
       const area = new Area(
         this,
         areaConfig.x,
@@ -82,7 +103,7 @@ export default class Game extends Phaser.Scene {
         areaConfig.music,
         areaConfig.measure
       );
-      musicLoading.push(area.load());
+      resourcesLoading.push(area.load());
       return area;
     });
     this.soundEmitters = soundEmittersConfig.map((emitterConfig) => {
@@ -95,13 +116,13 @@ export default class Game extends Phaser.Scene {
         emitterConfig.sound,
         emitterConfig.length
       );
-      musicLoading.push(emitter.load());
+      resourcesLoading.push(emitter.load());
       return emitter;
     });
     this.instruments = new Instruments();
-    musicLoading.push(this.instruments.load());
+    resourcesLoading.push(this.instruments.load());
     this.sounds = new Sounds();
-    musicLoading.push(this.sounds.load());
+    resourcesLoading.push(this.sounds.load());
 
     // Debug camera
     // this.camera.startFollow(this.player.sprite);
@@ -129,7 +150,7 @@ export default class Game extends Phaser.Scene {
       );
       this.indicators.push(indicator);
       if (pathConfig.hint) {
-        musicLoading.push(indicator.load());
+        resourcesLoading.push(indicator.load());
       }
     }
 
@@ -141,12 +162,13 @@ export default class Game extends Phaser.Scene {
       () => this.onBorderCollide()
     );
 
-    // ------------LOADING --------------------
-    await Promise.all(musicLoading);
-    Game.orchestre.start();
-    areas[0].activate();
+    // Controls
+    const enter = this.input.keyboard.addKey('ENTER');
+    enter.on('down', () => this.onPressStart());
 
-    this.player.sprite.setDepth(1);
+    // ------------LOADING --------------------
+    await Promise.all(resourcesLoading);
+    this.onResourcesLoaded();
   }
 
   update() {
@@ -154,6 +176,41 @@ export default class Game extends Phaser.Scene {
     this.world.update();
     Game.collisionsManager.update();
     this.soundEmitters.forEach((emitter) => emitter.update());
+  }
+
+  private async loadTitle(): Promise<void> {
+    await loadFonts();
+    this.ui.init();
+    this.state = GameState.Title;
+  }
+
+  private async onResourcesLoaded() {
+    this.loaded = true;
+
+    Game.orchestre.start();
+    this.areas[0].activate();
+    if (this.state == GameState.Loading) {
+      await this.ui.hideLoading();
+      await this.activatePlayer();
+      this.state = GameState.Playing;
+    }
+  }
+
+  private async onPressStart() {
+    if (this.state === GameState.Title) {
+      this.state = GameState.Loading;
+      const uiPromise = this.ui.hideTitle(this.loaded);
+      if (this.loaded) {
+        await uiPromise;
+        this.activatePlayer();
+        this.state = GameState.Playing;
+      }
+    }
+  }
+
+  private activatePlayer() {
+    // TODO: show & activate player
+    this.player.sprite.setDepth(1);
   }
 
   private validatePath(id: string) {
