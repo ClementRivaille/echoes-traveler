@@ -12,16 +12,24 @@ export default class Player {
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private direction: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 1);
+  private active = false;
 
   constructor(private game: Phaser.Scene, x: number, y: number) {
     this.sprite = new GhostSprite(game, x, y);
     this.cursors = game.input.keyboard.createCursorKeys();
 
-    this.sprite.setDepth(-1);
+    this.sprite.setDepth(1);
   }
 
   public update() {
-    this.move();
+    if (this.active) {
+      this.move();
+    }
+  }
+
+  public async activate() {
+    await this.sprite.fadeIn();
+    this.active = true;
   }
 
   private move() {

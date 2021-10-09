@@ -209,8 +209,7 @@ export default class Game extends Phaser.Scene {
   }
 
   private activatePlayer() {
-    // TODO: show & activate player
-    this.player.sprite.setDepth(1);
+    this.player.activate();
   }
 
   private validatePath(id: string) {
@@ -239,7 +238,7 @@ export default class Game extends Phaser.Scene {
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  backgroundColor: '#125555',
+  backgroundColor: '#505050',
   width: 1024,
   height: 800,
   scene: Game,

@@ -32,7 +32,7 @@ export default class GhostSprite {
   public object: Phaser.GameObjects.Container;
   public body: Phaser.Physics.Arcade.Body;
 
-  constructor(game: Phaser.Scene, x: number, y: number) {
+  constructor(private game: Phaser.Scene, x: number, y: number) {
     this.initAnimations(game);
 
     this.sprite = game.add.sprite(
@@ -54,7 +54,9 @@ export default class GhostSprite {
 
     this.shadow = game.add.sprite(0, 0, Resources.Shadow);
     this.shadow.scale = SCALE;
-    this.shadow.alpha = 0.5;
+
+    this.sprite.alpha = 0;
+    this.shadow.alpha = 0;
 
     this.object = game.add.container(x, y, [this.shadow, this.sprite]);
     this.object.setSize(BODY_WIDTH, BODY_HEIGHT);
@@ -79,6 +81,38 @@ export default class GhostSprite {
 
   setDepth(value: number) {
     this.object.setDepth(value);
+  }
+
+  fadeIn(): Promise<void> {
+    const tweenConfig = {
+      duration: 500,
+      ease: 'Sine.easeOut',
+    };
+    const tween = this.game.tweens.add({
+      ...tweenConfig,
+      targets: [this.sprite],
+      alpha: 1,
+    });
+    this.game.tweens.add({
+      ...tweenConfig,
+      targets: [this.shadow],
+      alpha: 0.5,
+    });
+    const vibration = this.game.tweens.add({
+      duration: 30,
+      targets: [this.sprite, this.shadow],
+      x: -2,
+      yoyo: true,
+      loop: -1,
+    });
+    return new Promise<void>((resolve) => {
+      tween.once('complete', () => {
+        vibration.stop();
+        this.sprite.setX(0);
+        this.shadow.setX(0);
+        resolve();
+      });
+    });
   }
 
   public get x() {
