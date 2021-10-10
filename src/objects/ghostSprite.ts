@@ -1,3 +1,4 @@
+import { promisifyTween } from '../utils/animation';
 import { Resources } from '../utils/resources';
 
 export enum GhostAnimations {
@@ -83,7 +84,7 @@ export default class GhostSprite {
     this.object.setDepth(value);
   }
 
-  fadeIn(): Promise<void> {
+  async fadeIn(): Promise<void> {
     const tweenConfig = {
       duration: 500,
       ease: 'Sine.easeOut',
@@ -105,14 +106,12 @@ export default class GhostSprite {
       yoyo: true,
       loop: -1,
     });
-    return new Promise<void>((resolve) => {
-      tween.once('complete', () => {
-        vibration.stop();
-        this.sprite.setX(0);
-        this.shadow.setX(0);
-        resolve();
-      });
-    });
+
+    // End animation
+    await promisifyTween(tween);
+    vibration.stop();
+    this.sprite.setX(0);
+    this.shadow.setX(0);
   }
 
   public get x() {

@@ -50,6 +50,7 @@ export default class Game extends Phaser.Scene {
 
   private state: GameState = GameState.Preload;
   private loaded = false;
+  private tutorial = false;
 
   constructor() {
     super('game');
@@ -175,6 +176,18 @@ export default class Game extends Phaser.Scene {
     this.world.update();
     Game.collisionsManager.update();
     this.soundEmitters.forEach((emitter) => emitter.update());
+
+    if (this.tutorial) {
+      const playerPosition = this.player.getPosition();
+      if (
+        Math.abs(playerPosition.x) > this.camera.width / 2 ||
+        playerPosition.y > this.camera.height / 2 + FRAME_HEIGHT ||
+        playerPosition.y < -this.camera.height / 2
+      ) {
+        this.ui.showCamera();
+        this.tutorial = false;
+      }
+    }
   }
 
   private async loadTitle(): Promise<void> {
@@ -190,7 +203,7 @@ export default class Game extends Phaser.Scene {
     this.areas[0].activate();
     if (this.state == GameState.Loading) {
       await this.ui.hideLoading();
-      await this.activatePlayer();
+      this.startGame();
       this.state = GameState.Playing;
     }
   }
@@ -201,14 +214,16 @@ export default class Game extends Phaser.Scene {
       const uiPromise = this.ui.hideTitle(this.loaded);
       if (this.loaded) {
         await uiPromise;
-        this.activatePlayer();
+        this.startGame();
         this.state = GameState.Playing;
       }
     }
   }
 
-  private activatePlayer() {
-    this.player.activate();
+  private async startGame() {
+    await this.player.activate();
+    this.tutorial = true;
+    await this.ui.showFirstSteps();
   }
 
   private validatePath(id: string) {
@@ -224,6 +239,7 @@ export default class Game extends Phaser.Scene {
 
     if (this.pathValidated === 1) {
       this.borders.desactivate();
+      this.ui.showGoal();
     }
   }
 
@@ -237,7 +253,7 @@ export default class Game extends Phaser.Scene {
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  backgroundColor: '#505050',
+  backgroundColor: '#303030',
   width: 1024,
   height: 800,
   scene: Game,

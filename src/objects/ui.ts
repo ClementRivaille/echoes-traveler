@@ -1,6 +1,19 @@
+import { promisifyTween, yieldTimeout } from '../utils/animation';
+import { DialogName, dialogs } from '../utils/dialogs';
 import { Font, loadFonts } from '../utils/fonts';
 
 const UI_DEPTH = 10;
+const DIALOG_FADEIN = 600;
+const DIALOG_FADEOUT = 400;
+const DIALOG_STYLE: Phaser.Types.GameObjects.Text.TextStyle = {
+  fontSize: '40px',
+  fontFamily: Font.ldcBlackRound,
+};
+
+interface TextTweens {
+  loading?: Phaser.Tweens.Tween;
+  dialogs?: Phaser.Tweens.Tween;
+}
 
 export default class UI {
   private loading: Phaser.GameObjects.Text;
@@ -12,6 +25,9 @@ export default class UI {
 
   private top: Phaser.GameObjects.Text;
   private bottom: Phaser.GameObjects.Text;
+
+  private tweens: TextTweens = {};
+  private displayedDialog?: DialogName;
 
   constructor(private game: Phaser.Scene) {
     this.loading = this.initText(0, 50, 'Loading', {
@@ -39,16 +55,16 @@ export default class UI {
       fontFamily: Font.adventurer,
       fontSize: '110px',
     });
+    this.title.setShadow(-5, 10, '#00000022', 6);
     this.pressStart = this.initText(0, 150, 'Press Enter to begin', {
       fontSize: '50px',
     });
+    this.pressStart.setShadow(-5, 5, '#00000022', 2);
 
-    this.top = this.initText(0, -300, '', {
-      fontSize: '80px',
-    });
-    this.bottom = this.initText(0, 300, '', {
-      fontSize: '80px',
-    });
+    this.top = this.initText(0, -320, '', DIALOG_STYLE);
+    this.top.setShadow(-8, 8, '#00000022', 2);
+    this.bottom = this.initText(0, 320, '', DIALOG_STYLE);
+    this.bottom.setShadow(-8, 8, '#00000022', 2);
     this.top.alpha = 0;
     this.bottom.alpha = 0;
   }
@@ -57,35 +73,96 @@ export default class UI {
     const titleTweenPromise = this.fadeOutTitle();
     if (!loaded) {
       this.loadingInterval = setInterval(() => this.animateLoading(), 300);
-      this.fadeText([this.loading], true, 300);
+      this.tweens.loading = this.fadeText([this.loading], true, 300);
     }
 
     return titleTweenPromise;
   }
 
-  hideLoading() {
+  async showFirstSteps() {
+    this.loadDialog(DialogName.FirstSteps);
+    this.displayedDialog = DialogName.FirstSteps;
+    await promisifyTween(this.fadeText([this.top], true, DIALOG_FADEIN));
+    await yieldTimeout(2500);
+    // If interrupted, stop
+    if (this.displayedDialog !== DialogName.FirstSteps) return;
+    this.tweens.dialogs = this.fadeText([this.bottom], true, DIALOG_FADEIN);
+    try {
+      await promisifyTween(this.tweens.dialogs);
+      delete this.tweens.dialogs;
+    } catch (e) {}
+  }
+
+  async showGoal() {
+    try {
+      this.displayedDialog = DialogName.Goal;
+      if (this.tweens.dialogs) {
+        this.tweens.dialogs.stop(1);
+      }
+      await this.fadeDialog(false);
+
+      this.loadDialog(DialogName.Goal);
+      await this.fadeDialog(true);
+
+      await yieldTimeout(4000);
+      if (this.displayedDialog !== DialogName.Goal) return;
+
+      await this.fadeDialog(false);
+      delete this.tweens.dialogs;
+      delete this.displayedDialog;
+    } catch (e) {
+      // Interrupted
+    }
+  }
+
+  async showCamera() {
+    try {
+      this.displayedDialog = DialogName.Camera;
+      if (this.tweens.dialogs) {
+        this.tweens.dialogs.stop();
+      }
+      if (this.top.alpha > 0) {
+        await this.fadeDialog(false);
+      }
+
+      this.loadDialog(DialogName.Camera);
+      await this.fadeDialog(true);
+
+      await yieldTimeout(5000);
+      if (this.displayedDialog !== DialogName.Camera) return;
+
+      await this.fadeDialog(false);
+      delete this.tweens.dialogs;
+      delete this.displayedDialog;
+    } catch (e) {}
+  }
+
+  async hideLoading() {
     clearInterval(this.loadingInterval);
-    return this.fadeText([this.loading], false, 200);
+    if (this.tweens.loading && this.tweens.loading.isPlaying()) {
+      this.tweens.loading.stop();
+    }
+    this.tweens.loading = this.fadeText([this.loading], false, 200);
+    return promisifyTween(this.tweens.loading);
   }
 
   private fadeText(
     texts: Phaser.GameObjects.GameObject[],
     toIn: boolean,
     duration: number
-  ) {
-    return new Promise<void>((resolve) => {
-      this.game.tweens.add({
-        targets: texts,
-        alpha: toIn ? 1 : 0,
-        ease: toIn ? 'Sine.easeInOut' : 'Sine.easeIn',
-        duration,
-        onComplete: resolve,
-      });
+  ): Phaser.Tweens.Tween {
+    return this.game.tweens.add({
+      targets: texts,
+      alpha: toIn ? 1 : 0,
+      ease: toIn ? 'Sine.easeInOut' : 'Sine.easeIn',
+      duration,
     });
   }
 
   private fadeOutTitle() {
-    return this.fadeText([this.title, this.pressStart], false, 500);
+    return promisifyTween(
+      this.fadeText([this.title, this.pressStart], false, 500)
+    );
   }
 
   private animateLoading() {
@@ -102,12 +179,27 @@ export default class UI {
   ) {
     const textObj = this.game.add.text(x, y, text, {
       fontFamily: Font.ataristocrat,
-      ...style,
       color: 'white',
       align: 'center',
+      ...style,
     });
     textObj.setDepth(UI_DEPTH);
     textObj.setOrigin(0.5, 0.5);
     return textObj;
+  }
+
+  private loadDialog(name: DialogName) {
+    const dialog = dialogs[name];
+    this.top.setText(dialog.top);
+    this.bottom.setText(dialog.bottom);
+  }
+
+  private async fadeDialog(toIn) {
+    this.tweens.dialogs = this.fadeText(
+      [this.top, this.bottom],
+      toIn,
+      toIn ? DIALOG_FADEIN : DIALOG_FADEOUT
+    );
+    await promisifyTween(this.tweens.dialogs);
   }
 }
