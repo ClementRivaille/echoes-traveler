@@ -23,6 +23,7 @@ export enum Resources {
   ValidatePath = 'validatePath',
   FailPath = 'failPath',
   Block = 'Block',
+  Teleport = 'Teleport',
 
   // ---- MUSIC ----
 
@@ -168,6 +169,7 @@ export const sounds = new Map<Resources, string>([
   [Resources.ValidatePath, 'assets/sounds/tubular_bells.wav'],
   [Resources.FailPath, 'assets/sounds/fail.wav'],
   [Resources.Block, 'assets/sounds/block.wav'],
+  [Resources.Teleport, 'assets/sounds/teleport.wav'],
 ]);
 
 export const musics = new Map<Resources, string>([

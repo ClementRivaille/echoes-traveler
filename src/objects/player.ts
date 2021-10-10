@@ -1,4 +1,5 @@
 import 'phaser';
+import Game from '../game';
 import { Resources } from '../utils/resources';
 import GhostSprite, {
   AnimationDirection,
@@ -28,6 +29,7 @@ export default class Player {
   }
 
   public async activate() {
+    Game.sounds.play(Resources.Teleport);
     await this.sprite.fadeIn();
     this.active = true;
   }

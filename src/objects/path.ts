@@ -34,7 +34,6 @@ export default class Path {
     private id: string,
     directions: Directions[],
     private instruments: Instruments,
-    private sounds: Sounds,
     private onValidateCallback: (id: string) => void
   ) {
     const firstTile = new Tile(
@@ -79,7 +78,7 @@ export default class Path {
       if (state === TileState.Inactive && value === this.step + 1) {
         // End path
         if (value === this.tiles.length) {
-          this.state = PathState.Validated
+          this.state = PathState.Validated;
           this.validate();
         }
         // Path in validation
@@ -129,9 +128,11 @@ export default class Path {
           NOTES[(value - 1) % NOTES.length],
           InstrumentType.Second
         );
-        const previousTile = this.tiles.find(tile => tile.getState() === TileState.Validation)
+        const previousTile = this.tiles.find(
+          (tile) => tile.getState() === TileState.Validation
+        );
         if (previousTile) {
-          previousTile.setState(TileState.Validated)
+          previousTile.setState(TileState.Validated);
         }
         this.tiles[value - 1].setState(TileState.Validation);
       }
@@ -171,7 +172,7 @@ export default class Path {
     this.tiles.forEach((tile) => tile.setState(TileState.Inactive));
     this.step = 0;
     this.state = PathState.Inactive;
-    this.sounds.play(Resources.FailPath);
+    Game.sounds.play(Resources.FailPath);
   }
 
   private hintTile(index) {
@@ -182,8 +183,8 @@ export default class Path {
 
   private validate() {
     this.state = PathState.Validated;
-    this.tiles.forEach(tile => tile.setState(TileState.Completed))
-    this.sounds.play(Resources.ValidatePath);
+    this.tiles.forEach((tile) => tile.setState(TileState.Completed));
+    Game.sounds.play(Resources.ValidatePath);
     this.onValidateCallback(this.id);
   }
 }

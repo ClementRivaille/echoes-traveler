@@ -40,13 +40,13 @@ export default class Game extends Phaser.Scene {
 
   private soundEmitters: SoundEmitter[];
   private instruments: Instruments;
-  private sounds: Sounds;
   private world: World;
   private areas: Area[];
 
   public static orchestre: Orchestre;
   public static collisionsManager: CollisionManager;
   public static context: AudioContext;
+  public static sounds: Sounds;
 
   private state: GameState = GameState.Preload;
   private loaded = false;
@@ -121,8 +121,8 @@ export default class Game extends Phaser.Scene {
     });
     this.instruments = new Instruments();
     resourcesLoading.push(this.instruments.load());
-    this.sounds = new Sounds();
-    resourcesLoading.push(this.sounds.load());
+    Game.sounds = new Sounds();
+    resourcesLoading.push(Game.sounds.load());
 
     // Debug camera
     // this.camera.startFollow(this.player.sprite);
@@ -137,7 +137,6 @@ export default class Game extends Phaser.Scene {
           pathConfig.id,
           pathConfig.directions,
           this.instruments,
-          this.sounds,
           (id) => this.validatePath(id)
         )
       );
@@ -229,7 +228,7 @@ export default class Game extends Phaser.Scene {
   }
 
   private onBorderCollide() {
-    this.sounds.play(Resources.Block);
+    Game.sounds.play(Resources.Block);
     this.indicators[0].blink();
   }
 
