@@ -17,6 +17,7 @@ import Sounds from './utils/Sounds';
 import UI from './objects/ui';
 import { loadFonts } from './utils/fonts';
 import { StateTimeline } from 'tone';
+import Ending from './objects/ending';
 
 enum GameState {
   Preload,
@@ -43,7 +44,10 @@ export default class Game extends Phaser.Scene {
   private world: World;
   private areas: Area[];
 
+  private ending: Ending;
+
   public static orchestre: Orchestre;
+  public static orchestreVolume: GainNode;
   public static collisionsManager: CollisionManager;
   public static context: AudioContext;
   public static sounds: Sounds;
@@ -94,6 +98,13 @@ export default class Game extends Phaser.Scene {
 
     Game.context = new AudioContext();
     Game.orchestre = new Orchestre(110, Game.context);
+    Game.orchestreVolume = new GainNode(Game.context, {
+      gain: 2,
+    });
+    Game.orchestreVolume.connect(Game.context.destination);
+    Game.orchestre.master.disconnect(Game.context.destination);
+    Game.orchestre.master.connect(Game.orchestreVolume);
+
     this.areas = areasConfig.map((areaConfig) => {
       const area = new Area(
         this,
@@ -166,6 +177,9 @@ export default class Game extends Phaser.Scene {
     const enter = this.input.keyboard.addKey('ENTER');
     enter.on('down', () => this.onPressStart());
 
+    // Ending
+    this.ending = new Ending();
+
     // ------------LOADING --------------------
     await Promise.all(resourcesLoading);
     this.onResourcesLoaded();
@@ -234,7 +248,8 @@ export default class Game extends Phaser.Scene {
     this.pathValidated += 1;
 
     if (this.pathValidated === this.paths.length) {
-      // TODO: end game
+      // if (this.pathValidated === 2) {
+      this.ending.start();
     }
 
     if (this.pathValidated === 1) {

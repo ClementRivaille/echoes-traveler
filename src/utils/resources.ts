@@ -141,6 +141,9 @@ export enum Resources {
   desert_C_marimba = 'desert_C_marimba',
   desert_C_sax = 'desert_C_sax',
   desert_flute = 'desert_flute',
+
+  // End
+  ending = 'ending',
 }
 
 export const images = new Map<Resources, string>([
@@ -315,4 +318,6 @@ export const musics = new Map<Resources, string>([
   [Resources.desert_C_marimba, 'assets/music/desert/desert_C_marimba.ogg'],
   [Resources.desert_C_sax, 'assets/music/desert/desert_C_sax.ogg'],
   [Resources.desert_flute, 'assets/music/desert/desert_flute.ogg'],
+
+  [Resources.ending, 'assets/music/ending.wav'],
 ]);

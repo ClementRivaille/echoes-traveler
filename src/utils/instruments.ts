@@ -30,7 +30,7 @@ export default class Instruments {
         ).connect(mainReverb);
         mainReverb.generate();
         this.instruments[InstrumentType.Main].release = 3;
-        this.instruments[InstrumentType.Main].set({ volume: 7 });
+        this.instruments[InstrumentType.Main].set({ volume: 12 });
       })
     );
 
@@ -56,7 +56,7 @@ export default class Instruments {
         ).connect(secondEcho);
         secondReverb.generate();
         this.instruments[InstrumentType.Second].release = 3;
-        this.instruments[InstrumentType.Second].set({ volume: 6 });
+        this.instruments[InstrumentType.Second].set({ volume: 10 });
       })
     );
 

@@ -5,7 +5,7 @@ export default class Sounds {
   private players: { [key in Resources]?: Player } = {};
   private promises: Promise<void>[] = [];
   constructor() {
-    const gain = new Gain(0.7).toDestination();
+    const gain = new Gain(1.3).toDestination();
     for (const soundRes of sounds.keys()) {
       this.promises.push(
         new Promise((resolve) => {
