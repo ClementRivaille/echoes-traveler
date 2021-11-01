@@ -10,16 +10,12 @@ export default class World {
     const playerPosition = this.player.getPosition();
 
     if (Math.abs(playerPosition.x) > WORLD_RADIUS) {
-      // const diff = Math.abs(playerPosition.x) - WORLD_RADIUS;
-      // const side = playerPosition.x > 0 ? -1 : 1;
       this.player.warp(
         World.getOppositePosition(playerPosition.x),
         playerPosition.y
       );
     }
     if (Math.abs(playerPosition.y) > WORLD_RADIUS) {
-      // const diff = Math.abs(playerPosition.y) - WORLD_RADIUS;
-      // const side = playerPosition.y > 0 ? -1 : 1;
       this.player.warp(
         playerPosition.x,
         World.getOppositePosition(playerPosition.y)

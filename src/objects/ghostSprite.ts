@@ -33,6 +33,8 @@ export default class GhostSprite {
   public object: Phaser.GameObjects.Container;
   public body: Phaser.Physics.Arcade.Body;
 
+  private floating: Phaser.Tweens.Tween;
+
   constructor(private game: Phaser.Scene, x: number, y: number) {
     this.initAnimations(game);
 
@@ -44,7 +46,7 @@ export default class GhostSprite {
     );
     this.sprite.play(GhostAnimations.IdleFront);
     this.sprite.scale = SCALE;
-    game.tweens.add({
+    this.floating = game.tweens.add({
       targets: [this.sprite],
       y: -GROUND_HEIGHT - 10,
       yoyo: true,
@@ -119,6 +121,10 @@ export default class GhostSprite {
   public hide() {
     this.sprite.setAlpha(0);
     this.shadow.setAlpha(0);
+  }
+
+  public stopFloating() {
+    this.floating.stop();
   }
 
   public get x() {

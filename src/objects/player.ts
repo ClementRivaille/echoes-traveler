@@ -1,5 +1,6 @@
 import 'phaser';
 import Game from '../game';
+import { yieldTimeout } from '../utils/animation';
 import { Resources } from '../utils/resources';
 import GhostSprite, {
   AnimationDirection,
@@ -47,6 +48,13 @@ export default class Player {
 
   public show() {
     return this.sprite.fadeIn(false);
+  }
+
+  public async fly() {
+    this.sprite.stopFloating();
+    this.sprite.body.setAccelerationY(-80);
+    await yieldTimeout(1000);
+    this.sprite.body.setAccelerationY(0);
   }
 
   private move() {

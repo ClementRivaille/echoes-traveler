@@ -182,7 +182,8 @@ export default class Game extends Phaser.Scene {
       this,
       this.orchestreVolume,
       this.camera,
-      this.player
+      this.player,
+      trees
     );
 
     // ------------LOADING --------------------
@@ -192,7 +193,7 @@ export default class Game extends Phaser.Scene {
 
   update() {
     this.player.update();
-    this.world.update();
+
     Game.collisionsManager.update();
     this.soundEmitters.forEach((emitter) => emitter.update());
 
@@ -208,6 +209,9 @@ export default class Game extends Phaser.Scene {
       }
     }
 
+    if (this.state === GameState.Playing) {
+      this.world.update();
+    }
     if (this.state === GameState.Ending) {
       this.ending.update();
     }
