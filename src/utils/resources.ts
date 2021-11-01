@@ -17,6 +17,7 @@ export enum Resources {
   TileNumber8 = 'TileNumber8',
   Shadow = 'shadow',
   GhostSpritesheet = 'GhostSpritesheet',
+  LightBridge = 'lightBridge',
 
   // ---- SOUNDS ----
 
@@ -162,6 +163,7 @@ export const images = new Map<Resources, string>([
   [Resources.TileNumber7, 'assets/sprites/tiles/tile_number_7.png'],
   [Resources.TileNumber8, 'assets/sprites/tiles/tile_number_8.png'],
   [Resources.Shadow, 'assets/sprites/ghost/shadow.png'],
+  [Resources.LightBridge, 'assets/sprites/ending/light_bridge.png'],
 ]);
 
 export const sprites = new Map<Resources, string>([

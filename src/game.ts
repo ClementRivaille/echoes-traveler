@@ -45,9 +45,9 @@ export default class Game extends Phaser.Scene {
   private areas: Area[];
 
   private ending: Ending;
+  private orchestreVolume: GainNode;
 
   public static orchestre: Orchestre;
-  public static orchestreVolume: GainNode;
   public static collisionsManager: CollisionManager;
   public static context: AudioContext;
   public static sounds: Sounds;
@@ -98,12 +98,12 @@ export default class Game extends Phaser.Scene {
 
     Game.context = new AudioContext();
     Game.orchestre = new Orchestre(110, Game.context);
-    Game.orchestreVolume = new GainNode(Game.context, {
+    this.orchestreVolume = new GainNode(Game.context, {
       gain: 2,
     });
-    Game.orchestreVolume.connect(Game.context.destination);
+    this.orchestreVolume.connect(Game.context.destination);
     Game.orchestre.master.disconnect(Game.context.destination);
-    Game.orchestre.master.connect(Game.orchestreVolume);
+    Game.orchestre.master.connect(this.orchestreVolume);
 
     this.areas = areasConfig.map((areaConfig) => {
       const area = new Area(
@@ -178,7 +178,12 @@ export default class Game extends Phaser.Scene {
     enter.on('down', () => this.onPressStart());
 
     // Ending
-    this.ending = new Ending();
+    this.ending = new Ending(
+      this,
+      this.orchestreVolume,
+      this.camera,
+      this.player
+    );
 
     // ------------LOADING --------------------
     await Promise.all(resourcesLoading);
@@ -201,6 +206,10 @@ export default class Game extends Phaser.Scene {
         this.ui.showCamera();
         this.tutorial = false;
       }
+    }
+
+    if (this.state === GameState.Ending) {
+      this.ending.update();
     }
   }
 
@@ -247,8 +256,10 @@ export default class Game extends Phaser.Scene {
     }
     this.pathValidated += 1;
 
-    if (this.pathValidated === this.paths.length) {
-      // if (this.pathValidated === 2) {
+    // if (this.pathValidated === this.paths.length) {
+    if (this.pathValidated === 1) {
+      this.state = GameState.Ending;
+      this.player.deactivate();
       this.ending.start();
     }
 

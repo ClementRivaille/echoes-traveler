@@ -8,6 +8,7 @@ const BLUE = 0x47ebf7;
 const GREEN = 0xc6f78f;
 
 const SIZE = 46;
+const INDICATOR_DEPTH = 2;
 
 export default class Indicator {
   private colorLight: Phaser.GameObjects.Sprite;
@@ -23,6 +24,8 @@ export default class Indicator {
   ) {
     this.colorLight = game.add.sprite(x, y, Resources.IndicatorLightColor);
     const panel = game.add.sprite(x, y, Resources.IndicatorLight);
+    this.colorLight.setDepth(INDICATOR_DEPTH);
+    panel.setDepth(INDICATOR_DEPTH + 0.1);
 
     this.colorLight.displayWidth = SIZE;
     this.colorLight.displayHeight = SIZE;

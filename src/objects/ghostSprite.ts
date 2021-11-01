@@ -84,7 +84,7 @@ export default class GhostSprite {
     this.object.setDepth(value);
   }
 
-  async fadeIn(): Promise<void> {
+  async fadeIn(shadow = true): Promise<void> {
     const tweenConfig = {
       duration: 500,
       ease: 'Sine.easeOut',
@@ -94,11 +94,13 @@ export default class GhostSprite {
       targets: [this.sprite],
       alpha: 1,
     });
-    this.game.tweens.add({
-      ...tweenConfig,
-      targets: [this.shadow],
-      alpha: 0.5,
-    });
+    if (shadow) {
+      this.game.tweens.add({
+        ...tweenConfig,
+        targets: [this.shadow],
+        alpha: 0.5,
+      });
+    }
     const vibration = this.game.tweens.add({
       duration: 30,
       targets: [this.sprite, this.shadow],
@@ -112,6 +114,11 @@ export default class GhostSprite {
     vibration.stop();
     this.sprite.setX(0);
     this.shadow.setX(0);
+  }
+
+  public hide() {
+    this.sprite.setAlpha(0);
+    this.shadow.setAlpha(0);
   }
 
   public get x() {

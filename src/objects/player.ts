@@ -7,6 +7,7 @@ import GhostSprite, {
 } from './ghostSprite';
 
 const SPEED = 170;
+const PLAYER_DEPTH = 5;
 
 export default class Player {
   public sprite: GhostSprite;
@@ -19,7 +20,7 @@ export default class Player {
     this.sprite = new GhostSprite(game, x, y);
     this.cursors = game.input.keyboard.createCursorKeys();
 
-    this.sprite.setDepth(1);
+    this.sprite.setDepth(PLAYER_DEPTH);
   }
 
   public update() {
@@ -32,6 +33,20 @@ export default class Player {
     Game.sounds.play(Resources.Teleport);
     await this.sprite.fadeIn();
     this.active = true;
+  }
+
+  public deactivate() {
+    this.active = false;
+    this.sprite.playAnimation(
+      GhostAnimations.IdleFront,
+      AnimationDirection.none
+    );
+    this.sprite.body.setVelocity(0, 0);
+    this.sprite.hide();
+  }
+
+  public show() {
+    return this.sprite.fadeIn(false);
   }
 
   private move() {
