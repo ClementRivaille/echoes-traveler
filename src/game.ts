@@ -3,7 +3,7 @@ import 'phaser';
 import Area from './objects/area';
 import Borders from './objects/Borders';
 import CollisionManager from './objects/collisionManager';
-import { FRAME_HEIGHT, FRAME_WIDTH } from './objects/ghostSprite';
+import { spritesDimensions } from './objects/ghostSprite';
 import Indicator from './objects/indicator';
 import Path from './objects/path';
 import Player from './objects/player';
@@ -65,9 +65,10 @@ export default class Game extends Phaser.Scene {
       this.load.image(image, images.get(image));
     }
     for (const sprite of sprites.keys()) {
+      const dimensions = spritesDimensions[sprite];
       this.load.spritesheet(sprite, sprites.get(sprite), {
-        frameWidth: FRAME_WIDTH,
-        frameHeight: FRAME_HEIGHT,
+        frameWidth: dimensions.width,
+        frameHeight: dimensions.height,
       });
     }
   }
@@ -199,9 +200,10 @@ export default class Game extends Phaser.Scene {
 
     if (this.tutorial) {
       const playerPosition = this.player.getPosition();
+      const playerHeight = spritesDimensions[Resources.GhostSpritesheet].height;
       if (
         Math.abs(playerPosition.x) > this.camera.width / 2 ||
-        playerPosition.y > this.camera.height / 2 + FRAME_HEIGHT ||
+        playerPosition.y > this.camera.height / 2 + playerHeight ||
         playerPosition.y < -this.camera.height / 2
       ) {
         this.ui.showCamera();

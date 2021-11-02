@@ -3,13 +3,14 @@ import { Player as TonePlayer } from 'tone';
 import Game from '../game';
 import { yieldTimeout } from '../utils/animation';
 import { musics, Resources } from '../utils/resources';
+import DarkGhost from './darkGhost';
 import Player from './player';
 
 const BEAT = 60 / 110;
 const BAR = BEAT * 4;
 
 const ACSENDING_BP = 12 * BAR;
-const GHOSTS_BP = 9 * BAR;
+const GHOSTS_BP = 8 * BAR;
 const SKY_BP = 8 * BAR;
 const ORBS_BP = 1 * BAR + 2 * BEAT;
 const EXPLOSION_BP = 4 * BAR + 1 * BEAT;
@@ -58,6 +59,8 @@ export default class Ending {
   private lightBridgeMask: Phaser.GameObjects.Sprite;
 
   private rayEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
+
+  private darkGhosts: DarkGhost[] = [];
 
   constructor(
     private game: Game,
@@ -126,13 +129,13 @@ export default class Ending {
     // Positions
     this.darkBg1.setDepth(1);
     this.darkBg2.setDepth(3);
-    this.lightBridge.setDepth(4);
+    this.lightBridge.setDepth(4.3);
     this.lightBridgeMask.setDepth(6);
   }
 
   start() {
     this.startTime = Game.context.currentTime;
-    this.orchestreVolume.gain.setTargetAtTime(0, this.startTime, 8);
+    this.orchestreVolume.gain.setTargetAtTime(0, this.startTime, 6);
     this.music.start();
     this.started = true;
     this.init();
@@ -145,6 +148,7 @@ export default class Ending {
       switch (this.step) {
         case EndingSteps.START:
           this.acsending();
+          break;
         case EndingSteps.ACSENDING:
           this.ghosts();
           break;
@@ -242,9 +246,25 @@ export default class Ending {
       duration: 5000,
     });
   }
-  private ghosts() {
+
+  private async ghosts() {
     this.step = EndingSteps.GHOSTS;
     this.nextBreakpoint = Game.context.currentTime + SKY_BP;
+
+    const nbGhosts = 40;
+    const minX = -this.camera.width / 2;
+    const maxX = this.camera.width / 2;
+    const maxY = this.player.getPosition().y + this.camera.height / 2;
+    const minY = this.player.getPosition().y - this.camera.height * 2.5;
+
+    for (const i of Array(nbGhosts)) {
+      const posX = minX + Math.random() * (maxX - minX);
+      const posY = minY + Math.random() * (maxY - minY);
+      const depth = 0.2 + Math.random();
+      this.darkGhosts.push(new DarkGhost(this.game, posX, posY, depth));
+
+      await yieldTimeout(Math.random() * 200);
+    }
   }
   private sky() {
     this.step = EndingSteps.SKY;

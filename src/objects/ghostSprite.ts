@@ -1,5 +1,5 @@
 import { promisifyTween } from '../utils/animation';
-import { Resources } from '../utils/resources';
+import { Resources, sprites } from '../utils/resources';
 
 export enum GhostAnimations {
   IdleFront = 'IdleFront',
@@ -18,8 +18,24 @@ export enum AnimationDirection {
 
 const FRAMERATE = 10;
 
-export const FRAME_WIDTH = 15;
-export const FRAME_HEIGHT = 36;
+interface FrameDimensions {
+  width: number;
+  height: number;
+}
+type SpriteDimensions = {
+  [key in Resources]?: FrameDimensions;
+};
+export const spritesDimensions: SpriteDimensions = {
+  [Resources.GhostSpritesheet]: {
+    width: 15,
+    height: 36,
+  },
+  [Resources.DarkGhost]: {
+    width: 15,
+    height: 35,
+  },
+};
+
 const SCALE = 1.5;
 
 const BODY_WIDTH = 32;
