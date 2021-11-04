@@ -61,6 +61,8 @@ export default class Ending {
   private rayEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
 
   private darkGhosts: DarkGhost[] = [];
+  private lights: Phaser.GameObjects.Light[] = [];
+  private lightBackground: Phaser.GameObjects.Sprite;
 
   constructor(
     private game: Game,
@@ -126,10 +128,20 @@ export default class Ending {
       });
     this.rayEmitter.stop();
 
+    const lightBg = this.game.make.graphics({ x: 0, y: 0, add: false });
+    lightBg.fillStyle(0xe4e3f7);
+    lightBg.fillRect(0, 0, this.camera.width, this.camera.height);
+    const lightBgName = 'LightBg';
+    lightBg.generateTexture(lightBgName, this.camera.width, this.camera.height);
+    this.lightBackground = this.game.add.sprite(0, 0, lightBgName);
+    this.lightBackground.setAlpha(0);
+    this.lightBackground.setPipeline('Light2D');
+
     // Positions
     this.darkBg1.setDepth(1);
     this.darkBg2.setDepth(3);
-    this.lightBridge.setDepth(4.3);
+    this.lightBackground.setDepth(3.1);
+    this.lightBridge.setDepth(4.4);
     this.lightBridgeMask.setDepth(6);
   }
 
@@ -251,11 +263,44 @@ export default class Ending {
     this.step = EndingSteps.GHOSTS;
     this.nextBreakpoint = Game.context.currentTime + SKY_BP;
 
+    const playerPosition = this.player.getPosition();
+    const bottomScreen = playerPosition.y + this.camera.height / 2;
+
+    // Add lights
+    this.rayEmitter.stop();
+    this.game.lights.enable();
+    this.game.tweens.add({
+      targets: [this.lightBackground],
+      alpha: 0.25,
+      duration: 500,
+    });
+    const nbLights = 12;
+    const stepY = 200;
+    const lightRadius = 1000;
+    for (let i = 0; i < nbLights; i++) {
+      const y = bottomScreen - stepY * i + (Math.random() * stepY) / 2;
+      const x =
+        (150 + Math.random() * (this.camera.width / 2)) * (i % 2 == 0 ? -1 : 1);
+      const light = this.game.lights.addLight(
+        x,
+        y,
+        lightRadius + (-300 + Math.random() * 600)
+      );
+      light.setIntensity(0);
+      this.game.tweens.add({
+        targets: [light],
+        intensity: 0.6 + Math.random() * 0.4,
+        ease: 'Sine.easeOut',
+        duration: 3000,
+      });
+      this.lights.push(light);
+    }
+
     const nbGhosts = 40;
     const minX = -this.camera.width / 2;
     const maxX = this.camera.width / 2;
-    const maxY = this.player.getPosition().y + this.camera.height / 2;
-    const minY = this.player.getPosition().y - this.camera.height * 2.5;
+    const maxY = bottomScreen;
+    const minY = playerPosition.y - this.camera.height * 2.5;
 
     for (const i of Array(nbGhosts)) {
       const posX = minX + Math.random() * (maxX - minX);
@@ -311,5 +356,9 @@ export default class Ending {
 
     this.darkBg1.setPosition(this.camera.midPoint.x, this.camera.midPoint.y);
     this.darkBg2.setPosition(this.camera.midPoint.x, this.camera.midPoint.y);
+    this.lightBackground.setPosition(
+      this.camera.midPoint.x,
+      this.camera.midPoint.y
+    );
   }
 }

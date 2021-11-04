@@ -291,6 +291,7 @@ const config: Phaser.Types.Core.GameConfig = {
   scene: Game,
   render: {
     pixelArt: true,
+    maxLights: 50,
   },
   // zoom: 0.5,
   physics: {
