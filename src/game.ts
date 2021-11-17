@@ -300,6 +300,11 @@ const config: Phaser.Types.Core.GameConfig = {
       // debug: true,
     },
   },
+  scale: {
+    expandParent: true,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    mode: Phaser.Scale.FIT,
+  },
 };
 
 const game = new Phaser.Game(config);
