@@ -16,8 +16,9 @@ import { images, Resources, sprites } from './utils/resources';
 import Sounds from './utils/Sounds';
 import UI from './objects/ui';
 import { loadFonts } from './utils/fonts';
-import { StateTimeline } from 'tone';
+import { Part, StateTimeline } from 'tone';
 import Ending from './objects/ending';
+import Particles from './utils/particles';
 
 enum GameState {
   Preload,
@@ -51,6 +52,7 @@ export default class Game extends Phaser.Scene {
   public static collisionsManager: CollisionManager;
   public static context: AudioContext;
   public static sounds: Sounds;
+  public static particles: Particles;
 
   private state: GameState = GameState.Preload;
   private loaded = false;
@@ -105,6 +107,8 @@ export default class Game extends Phaser.Scene {
     this.orchestreVolume.connect(Game.context.destination);
     Game.orchestre.master.disconnect(Game.context.destination);
     Game.orchestre.master.connect(this.orchestreVolume);
+
+    Game.particles = new Particles(this);
 
     this.areas = areasConfig.map((areaConfig) => {
       const area = new Area(

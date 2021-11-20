@@ -1,9 +1,11 @@
 import { Cameras } from 'phaser';
-import { Player as TonePlayer } from 'tone';
+import { getContext, Player as TonePlayer } from 'tone';
 import Game from '../game';
-import { yieldTimeout } from '../utils/animation';
+import { promisifyTween, yieldTimeout } from '../utils/animation';
 import { musics, Resources } from '../utils/resources';
 import DarkGhost from './darkGhost';
+import GhostSprite, { spritesDimensions } from './ghostSprite';
+import Orb, { NB_ORBS } from './orb';
 import Player from './player';
 
 const BEAT = 60 / 110;
@@ -17,7 +19,8 @@ const EXPLOSION_BP = 4 * BAR + 1 * BEAT;
 const STAR_BP = 1 * BEAT;
 const END_BP = 15 * BAR + 3 * BEAT;
 
-const OBS_ORDER_BPS = [0, 2 * BEAT, 1 * BAR, 2 * BEAT];
+const ORBS_ORDER_BPS = [0, 2 * BEAT, 1 * BAR, 2 * BEAT];
+const ORBS_SPEED = 2 * Math.PI * 0.007;
 
 enum EndingSteps {
   START,
@@ -37,11 +40,6 @@ enum ScrollingState {
 }
 
 const CAMERA_VELOCITY = 2;
-
-enum Particles {
-  ray = 'rayParticle',
-  circle = 'circleParticle',
-}
 
 const DARK_BLUE = 0x070b0e;
 
@@ -63,6 +61,10 @@ export default class Ending {
   private darkGhosts: DarkGhost[] = [];
   private lights: Phaser.GameObjects.Light[] = [];
   private lightBackground: Phaser.GameObjects.Sprite;
+
+  private orbsGroup: Phaser.GameObjects.Container;
+  private nextOrbBP = -1;
+  private activeOrbs: Orb[] = [];
 
   constructor(
     private game: Game,
@@ -104,29 +106,7 @@ export default class Ending {
     this.lightBridgeMask.setScale(3.4);
 
     // Particles
-    const rayParticle = this.game.make.graphics({ x: 0, y: 0, add: false });
-    rayParticle.fillStyle(0xffffff, 0.4);
-    rayParticle.fillRect(0, 0, 1, 16);
-    rayParticle.generateTexture(Particles.ray, 1, 16);
-
-    this.rayEmitter = this.game.add
-      .particles(Particles.ray)
-      .setDepth(6)
-      .createEmitter({
-        angle: -90,
-        lifespan: 3000,
-        frequency: 130,
-        emitZone: {
-          source: new Phaser.Geom.Rectangle(-50, 0, 100, 0),
-          type: 'random',
-        },
-        gravityY: 0,
-        speed: { min: 300, max: 700 },
-        scaleY: { min: 1, max: 1.7 },
-        alpha: { min: 0.4, max: 1 },
-        quantity: { min: 0, max: 2 },
-      });
-    this.rayEmitter.stop();
+    this.rayEmitter = Game.particles.makeRayParticlesEmitter();
 
     const lightBg = this.game.make.graphics({ x: 0, y: 0, add: false });
     lightBg.fillStyle(0xe4e3f7);
@@ -137,16 +117,21 @@ export default class Ending {
     this.lightBackground.setAlpha(0);
     this.lightBackground.setPipeline('Light2D');
 
+    // Orbs
+    this.orbsGroup = this.game.add.container(0, 0);
+    Orb.initTexture(this.game);
+
     // Positions
     this.darkBg1.setDepth(1);
     this.darkBg2.setDepth(3);
     this.lightBackground.setDepth(3.1);
     this.lightBridge.setDepth(4.4);
     this.lightBridgeMask.setDepth(6);
+    this.orbsGroup.setDepth(6);
   }
 
   start() {
-    this.startTime = Game.context.currentTime;
+    this.startTime = getContext().currentTime;
     this.orchestreVolume.gain.setTargetAtTime(0, this.startTime, 6);
     this.music.start();
     this.started = true;
@@ -156,10 +141,10 @@ export default class Ending {
   update() {
     if (!this.started) return;
 
-    if (Game.context.currentTime >= this.nextBreakpoint) {
+    if (getContext().currentTime >= this.nextBreakpoint) {
       switch (this.step) {
         case EndingSteps.START:
-          this.acsending();
+          this.ascending();
           break;
         case EndingSteps.ACSENDING:
           this.ghosts();
@@ -185,6 +170,10 @@ export default class Ending {
     }
 
     this.updateCamera();
+
+    if (this.step === EndingSteps.ORBS || this.step === EndingSteps.EXPLOSION) {
+      this.updateOrbs();
+    }
   }
 
   private async init() {
@@ -213,9 +202,9 @@ export default class Ending {
     await this.player.show();
   }
 
-  private async acsending() {
+  private async ascending() {
     this.step = EndingSteps.ACSENDING;
-    this.nextBreakpoint = Game.context.currentTime + GHOSTS_BP;
+    this.nextBreakpoint = getContext().currentTime + GHOSTS_BP;
 
     // Show light bridge
     this.game.tweens.add({
@@ -261,7 +250,7 @@ export default class Ending {
 
   private async ghosts() {
     this.step = EndingSteps.GHOSTS;
-    this.nextBreakpoint = Game.context.currentTime + SKY_BP;
+    this.nextBreakpoint = getContext().currentTime + SKY_BP;
 
     const playerPosition = this.player.getPosition();
     const bottomScreen = playerPosition.y + this.camera.height / 2;
@@ -311,21 +300,89 @@ export default class Ending {
       await yieldTimeout(Math.random() * 200);
     }
   }
-  private sky() {
+  private async sky() {
     this.step = EndingSteps.SKY;
-    this.nextBreakpoint = Game.context.currentTime + ORBS_BP;
+    this.nextBreakpoint = getContext().currentTime + ORBS_BP;
+
+    // Zoom
+    this.game.tweens.add({
+      targets: [this.camera],
+      zoom: 2,
+      ease: 'Sine.easeInOut',
+      duration: 11500,
+    });
+
+    // Remove light
+    this.game.tweens.add({
+      targets: [this.lightBridge, this.lightBridgeMask],
+      alpha: 0,
+      ease: 'Sine.easeIn',
+      duration: 6000,
+    });
+    await promisifyTween(
+      this.game.tweens.add({
+        targets: [...this.lights],
+        intensity: 0,
+        duration: 5000,
+        ease: 'Sine.easeIn',
+      })
+    );
+
+    // Clear unused sprites
+    this.lights.forEach((light) => this.game.lights.removeLight(light));
+    this.lights = [];
+    this.darkGhosts.forEach((ghost) => ghost.destroy());
+    this.darkGhosts = [];
   }
+
   private orbs() {
     this.step = EndingSteps.ORBS;
-    this.nextBreakpoint = Game.context.currentTime + EXPLOSION_BP;
+    this.nextBreakpoint = getContext().currentTime + EXPLOSION_BP;
+
+    this.nextOrbBP = getContext().currentTime + ORBS_ORDER_BPS[0];
   }
+
+  private updateOrbs() {
+    // Move group
+    const playerPosition = this.player.getPosition();
+    this.orbsGroup.setPosition(playerPosition.x, playerPosition.y - 40);
+    this.orbsGroup.setRotation(this.orbsGroup.rotation + ORBS_SPEED);
+    for (const orb of this.activeOrbs) {
+      orb.update(this.orbsGroup.rotation);
+    }
+
+    // Add orb
+    if (
+      this.activeOrbs.length < NB_ORBS &&
+      getContext().currentTime >= this.nextOrbBP
+    ) {
+      const idx = this.activeOrbs.length;
+      this.activeOrbs.push(
+        new Orb(this.game, this.orbsGroup, (idx * -2 * Math.PI) / NB_ORBS)
+      );
+
+      if (idx + 1 < ORBS_ORDER_BPS.length) {
+        this.nextOrbBP = this.nextOrbBP + ORBS_ORDER_BPS[idx + 1];
+      }
+    }
+  }
+
   private explosion() {
     this.step = EndingSteps.EXPLOSION;
-    this.nextBreakpoint = Game.context.currentTime + STAR_BP;
+    this.nextBreakpoint = getContext().currentTime + STAR_BP;
+
+    for (const orb of this.activeOrbs) {
+      orb.explode(STAR_BP * 1000);
+    }
   }
   private star() {
     this.step = EndingSteps.STAR;
-    this.nextBreakpoint = Game.context.currentTime + END_BP;
+    this.nextBreakpoint = getContext().currentTime + END_BP;
+
+    for (const orb of this.activeOrbs) {
+      orb.destroy();
+    }
+    this.activeOrbs = [];
   }
   private end() {
     this.step = EndingSteps.END;

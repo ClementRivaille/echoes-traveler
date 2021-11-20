@@ -1,3 +1,4 @@
+import { promisifyTween } from '../utils/animation';
 import { Resources } from '../utils/resources';
 
 const DARK_GHOST_DEPTH = 3.2;
@@ -26,5 +27,17 @@ export default class DarkGhost {
       ease: 'Sine.easeOut',
       duration: 3000,
     });
+  }
+
+  async destroy() {
+    await promisifyTween(
+      this.game.add.tween({
+        targets: [this.sprite],
+        alpha: 0,
+        ease: 'Sine.easeIn',
+        duration: 500,
+      })
+    );
+    this.sprite.destroy();
   }
 }
