@@ -146,6 +146,29 @@ export default class UI {
     return promisifyTween(this.tweens.loading);
   }
 
+  showCredits(x: number, y: number) {
+    this.blackScreen.setPosition(x, y);
+    this.game.tweens.add({
+      targets: [this.blackScreen],
+      alpha: 0.6,
+      duration: DIALOG_FADEIN,
+      ease: 'Sine.easeIn',
+    });
+
+    const thanks = this.initText(x, y - 200, 'Thank you for playing', {
+      ...DIALOG_STYLE,
+      fontSize: '50px',
+    });
+    thanks.setAlpha(0);
+
+    this.game.tweens.add({
+      targets: [thanks],
+      alpha: 1,
+      duration: DIALOG_FADEIN,
+      ease: 'Sine.easeInOut',
+    });
+  }
+
   private fadeText(
     texts: Phaser.GameObjects.GameObject[],
     toIn: boolean,

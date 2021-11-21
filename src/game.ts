@@ -223,6 +223,11 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  onEnd() {
+    this.state = GameState.Credits;
+    this.ui.showCredits(this.camera.midPoint.x, this.camera.midPoint.y);
+  }
+
   private async loadTitle(): Promise<void> {
     await loadFonts();
     this.ui.init();

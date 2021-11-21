@@ -505,6 +505,7 @@ export default class Ending {
           star.setTint(STAR_COLOR);
           star.setDepth(7);
           if (starTexture !== Resources.DotStar) {
+            star.setFrame(Math.random() < 0.5 ? 0 : 1);
             star.play(
               starTexture === Resources.MediumStar
                 ? StarAnimations.mediumTwinkle
@@ -518,6 +519,7 @@ export default class Ending {
   }
   private end() {
     this.step = EndingSteps.END;
+    this.game.onEnd();
   }
 
   private updateCamera() {
