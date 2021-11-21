@@ -505,12 +505,14 @@ export default class Ending {
           star.setTint(STAR_COLOR);
           star.setDepth(7);
           if (starTexture !== Resources.DotStar) {
-            star.setFrame(Math.random() < 0.5 ? 0 : 1);
-            star.play(
-              starTexture === Resources.MediumStar
-                ? StarAnimations.mediumTwinkle
-                : StarAnimations.smallTwinkle
-            );
+            star.play({
+              key:
+                starTexture === Resources.MediumStar
+                  ? StarAnimations.mediumTwinkle
+                  : StarAnimations.smallTwinkle,
+              startFrame: Math.random() < 0.5 ? 0 : 1,
+              delay: Math.random() * 500,
+            });
           }
           this.stars.push(star);
         }
