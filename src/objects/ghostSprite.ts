@@ -1,40 +1,15 @@
-import { promisifyTween } from '../utils/animation';
+import {
+  GhostAnimations,
+  setupGhostAnimations,
+  promisifyTween,
+} from '../utils/animation';
 import { Resources, sprites } from '../utils/resources';
-
-export enum GhostAnimations {
-  IdleFront = 'IdleFront',
-  IdleBack = 'IdleBack',
-  IdleSide = 'IdleSide',
-  WalkFront = 'WalkFront',
-  WalkBack = 'WalkBack',
-  WalkSide = 'WalkSide',
-}
 
 export enum AnimationDirection {
   none,
   left,
   right,
 }
-
-const FRAMERATE = 10;
-
-interface FrameDimensions {
-  width: number;
-  height: number;
-}
-type SpriteDimensions = {
-  [key in Resources]?: FrameDimensions;
-};
-export const spritesDimensions: SpriteDimensions = {
-  [Resources.GhostSpritesheet]: {
-    width: 15,
-    height: 36,
-  },
-  [Resources.DarkGhost]: {
-    width: 15,
-    height: 35,
-  },
-};
 
 const SCALE = 1.5;
 
@@ -52,7 +27,7 @@ export default class GhostSprite {
   private floating: Phaser.Tweens.Tween;
 
   constructor(private game: Phaser.Scene, x: number, y: number) {
-    this.initAnimations(game);
+    setupGhostAnimations(game);
 
     this.sprite = game.add.sprite(
       0,
@@ -148,56 +123,5 @@ export default class GhostSprite {
   }
   public get y() {
     return this.object.y;
-  }
-
-  private initAnimations(game: Phaser.Scene) {
-    game.anims.create({
-      key: GhostAnimations.IdleFront,
-      frames: game.anims.generateFrameNumbers(Resources.GhostSpritesheet, {
-        frames: [0],
-      }),
-      frameRate: FRAMERATE,
-      repeat: -1,
-    });
-    game.anims.create({
-      key: GhostAnimations.IdleBack,
-      frames: game.anims.generateFrameNumbers(Resources.GhostSpritesheet, {
-        frames: [4],
-      }),
-      frameRate: FRAMERATE,
-      repeat: -1,
-    });
-    game.anims.create({
-      key: GhostAnimations.IdleSide,
-      frames: game.anims.generateFrameNumbers(Resources.GhostSpritesheet, {
-        frames: [8],
-      }),
-      frameRate: FRAMERATE,
-      repeat: -1,
-    });
-    game.anims.create({
-      key: GhostAnimations.WalkFront,
-      frames: game.anims.generateFrameNumbers(Resources.GhostSpritesheet, {
-        frames: [0, 1, 2, 3],
-      }),
-      frameRate: FRAMERATE,
-      repeat: -1,
-    });
-    game.anims.create({
-      key: GhostAnimations.WalkBack,
-      frames: game.anims.generateFrameNumbers(Resources.GhostSpritesheet, {
-        frames: [4, 5, 6, 7],
-      }),
-      frameRate: FRAMERATE,
-      repeat: -1,
-    });
-    game.anims.create({
-      key: GhostAnimations.WalkSide,
-      frames: game.anims.generateFrameNumbers(Resources.GhostSpritesheet, {
-        frames: [8, 9, 10, 11],
-      }),
-      frameRate: FRAMERATE,
-      repeat: -1,
-    });
   }
 }

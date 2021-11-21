@@ -1,11 +1,8 @@
 import 'phaser';
 import Game from '../game';
-import { yieldTimeout } from '../utils/animation';
+import { GhostAnimations, yieldTimeout } from '../utils/animation';
 import { Resources } from '../utils/resources';
-import GhostSprite, {
-  AnimationDirection,
-  GhostAnimations,
-} from './ghostSprite';
+import GhostSprite, { AnimationDirection } from './ghostSprite';
 
 const SPEED = 170;
 const PLAYER_DEPTH = 5;

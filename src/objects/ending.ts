@@ -1,10 +1,14 @@
 import { Cameras } from 'phaser';
 import { getContext, Player as TonePlayer } from 'tone';
 import Game from '../game';
-import { promisifyTween, yieldTimeout } from '../utils/animation';
+import {
+  promisifyTween,
+  setupStarsAnimations,
+  StarAnimations,
+  yieldTimeout,
+} from '../utils/animation';
 import { musics, Resources } from '../utils/resources';
 import DarkGhost from './darkGhost';
-import GhostSprite, { spritesDimensions } from './ghostSprite';
 import Orb, { NB_ORBS } from './orb';
 import Player from './player';
 
@@ -43,6 +47,11 @@ const CAMERA_VELOCITY = 2;
 
 const DARK_BLUE = 0x070b0e;
 
+const STAR_SCALE = 4;
+const STAR_COLOR = 0xfafcee;
+const PLAYER_STAR_COLOR = 0xfaffd3;
+const SKY_COLOR = 0x02032a;
+
 export default class Ending {
   private music: TonePlayer;
   private startTime = -1;
@@ -66,6 +75,11 @@ export default class Ending {
   private nextOrbBP = -1;
   private activeOrbs: Orb[] = [];
 
+  private flash: Phaser.GameObjects.Rectangle;
+  private playerStar: Phaser.GameObjects.Sprite;
+  private stars: Phaser.GameObjects.Sprite[] = [];
+  private explosionParticles: Phaser.GameObjects.Particles.ParticleEmitter;
+
   constructor(
     private game: Game,
     private orchestreVolume: GainNode,
@@ -82,7 +96,7 @@ export default class Ending {
       0,
       0,
       this.camera.width,
-      this.camera.height,
+      this.camera.height + 50,
       DARK_BLUE
     );
     this.darkBg1.setAlpha(0);
@@ -90,7 +104,7 @@ export default class Ending {
       0,
       0,
       this.camera.width,
-      this.camera.height,
+      this.camera.height + 50,
       0x000000
     );
     this.darkBg2.setAlpha(0);
@@ -110,9 +124,13 @@ export default class Ending {
 
     const lightBg = this.game.make.graphics({ x: 0, y: 0, add: false });
     lightBg.fillStyle(0xe4e3f7);
-    lightBg.fillRect(0, 0, this.camera.width, this.camera.height);
+    lightBg.fillRect(0, 0, this.camera.width, this.camera.height + 50);
     const lightBgName = 'LightBg';
-    lightBg.generateTexture(lightBgName, this.camera.width, this.camera.height);
+    lightBg.generateTexture(
+      lightBgName,
+      this.camera.width,
+      this.camera.height + 50
+    );
     this.lightBackground = this.game.add.sprite(0, 0, lightBgName);
     this.lightBackground.setAlpha(0);
     this.lightBackground.setPipeline('Light2D');
@@ -121,6 +139,24 @@ export default class Ending {
     this.orbsGroup = this.game.add.container(0, 0);
     Orb.initTexture(this.game);
 
+    // Stars
+    setupStarsAnimations(this.game);
+    this.flash = this.game.add.rectangle(
+      0,
+      0,
+      this.camera.width,
+      this.camera.height,
+      0xffffff
+    );
+    this.flash.setAlpha(0);
+    this.playerStar = this.game.add
+      .sprite(0, 0, Resources.LargeStar)
+      .play(StarAnimations.largeTwinkle);
+    this.playerStar.setScale(STAR_SCALE);
+    this.playerStar.setTint(PLAYER_STAR_COLOR);
+    this.playerStar.setAlpha(0);
+    this.explosionParticles = Game.particles.makeCircleExplosionEmitter();
+
     // Positions
     this.darkBg1.setDepth(1);
     this.darkBg2.setDepth(3);
@@ -128,6 +164,8 @@ export default class Ending {
     this.lightBridge.setDepth(4.4);
     this.lightBridgeMask.setDepth(6);
     this.orbsGroup.setDepth(6);
+    this.flash.setDepth(10);
+    this.playerStar.setDepth(6);
   }
 
   start() {
@@ -379,10 +417,104 @@ export default class Ending {
     this.step = EndingSteps.STAR;
     this.nextBreakpoint = getContext().currentTime + END_BP;
 
+    // Clear orbs
     for (const orb of this.activeOrbs) {
       orb.destroy();
     }
     this.activeOrbs = [];
+
+    // Deactivate player and stop scrolling
+    this.player.deactivate();
+    this.scrolling = ScrollingState.None;
+
+    const playerPosition = this.player.getPosition();
+
+    // Flash & explosion
+    this.flash.setPosition(playerPosition.x, playerPosition.y);
+    this.flash.setAlpha(1);
+    this.game.tweens.add({
+      targets: [this.flash],
+      alpha: 0,
+      duration: 1500,
+      ease: 'Sine.easeOut',
+    });
+    this.explosionParticles.explode(
+      20,
+      playerPosition.x,
+      playerPosition.y - 40
+    );
+
+    // Dezoom
+    this.game.tweens.add({
+      targets: [this.camera],
+      zoom: 1,
+      duration: END_BP * 1000 - 1000,
+      ease: 'Sine.easeOut',
+    });
+
+    // Stars
+    this.playerStar.setAlpha(1);
+    this.playerStar.setPosition(playerPosition.x, playerPosition.y - 40);
+    this.game.lights.disable();
+
+    // Fill sky
+    this.lightBackground.destroy();
+    this.darkBg2.setFillStyle(SKY_COLOR);
+    this.darkBg2.setPosition(this.camera.midPoint.x, this.camera.midPoint.y);
+    this.fillSky();
+  }
+
+  private fillSky() {
+    const sky_chunk = 150;
+    const chunk_margin = 20;
+    const leftBorder = this.camera.midPoint.x - this.camera.width / 2;
+    const topBorder = this.camera.midPoint.y - this.camera.height / 2;
+    const stepsY = Math.floor(this.camera.height / sky_chunk) + 1;
+    const stepsX = Math.floor(this.camera.width / sky_chunk) + 1;
+    const lastMedium = { x: -5, y: -5 };
+    for (let idxY = 0; idxY < stepsY; idxY++) {
+      const y = topBorder + sky_chunk * idxY;
+      for (let idxX = 0; idxX < stepsX; idxX++) {
+        const x = leftBorder + sky_chunk * idxX;
+
+        const closeToCenter =
+          Math.abs(stepsY / 2 - idxY) <= 1 && Math.abs(stepsX / 2 - idxX) <= 1;
+
+        if (!closeToCenter && Math.random() > 0.4) {
+          // Add star
+          const starX =
+            x + chunk_margin + Math.random() * (sky_chunk - 2 * chunk_margin);
+          const starY =
+            y + chunk_margin + Math.random() * (sky_chunk - 2 * chunk_margin);
+          const mediumStar =
+            Math.abs(lastMedium.x - idxX) > 2 &&
+            Math.abs(lastMedium.y - idxY) > 2 &&
+            Math.random() < 0.5;
+          // Select sprite
+          if (mediumStar) {
+            lastMedium.x = idxX;
+            lastMedium.y = idxY;
+          }
+          const starTexture = mediumStar
+            ? Resources.MediumStar
+            : Math.random() < 0.4
+            ? Resources.SmallStar
+            : Resources.DotStar;
+          const star = this.game.add.sprite(starX, starY, starTexture);
+          star.setScale(STAR_SCALE);
+          star.setTint(STAR_COLOR);
+          star.setDepth(7);
+          if (starTexture !== Resources.DotStar) {
+            star.play(
+              starTexture === Resources.MediumStar
+                ? StarAnimations.mediumTwinkle
+                : StarAnimations.smallTwinkle
+            );
+          }
+          this.stars.push(star);
+        }
+      }
+    }
   }
   private end() {
     this.step = EndingSteps.END;

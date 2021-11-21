@@ -3,7 +3,6 @@ import 'phaser';
 import Area from './objects/area';
 import Borders from './objects/Borders';
 import CollisionManager from './objects/collisionManager';
-import { spritesDimensions } from './objects/ghostSprite';
 import Indicator from './objects/indicator';
 import Path from './objects/path';
 import Player from './objects/player';
@@ -19,6 +18,7 @@ import { loadFonts } from './utils/fonts';
 import { Part, StateTimeline } from 'tone';
 import Ending from './objects/ending';
 import Particles from './utils/particles';
+import { spritesDimensions } from './utils/animation';
 
 enum GameState {
   Preload,

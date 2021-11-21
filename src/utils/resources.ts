@@ -19,6 +19,10 @@ export enum Resources {
   GhostSpritesheet = 'GhostSpritesheet',
   DarkGhost = 'DarkGhost',
   LightBridge = 'lightBridge',
+  LargeStar = 'LargeStar',
+  MediumStar = 'MediumStar',
+  SmallStar = 'SmallStar',
+  DotStar = 'DotStar',
 
   // ---- SOUNDS ----
 
@@ -170,6 +174,10 @@ export const images = new Map<Resources, string>([
 export const sprites = new Map<Resources, string>([
   [Resources.GhostSpritesheet, 'assets/sprites/ghost/ghost_spritesheet.png'],
   [Resources.DarkGhost, 'assets/sprites/ghost/dark_ghost.png'],
+  [Resources.LargeStar, 'assets/sprites/stars/big_star.png'],
+  [Resources.MediumStar, 'assets/sprites/stars/middle_star.png'],
+  [Resources.SmallStar, 'assets/sprites/stars/small_star.png'],
+  [Resources.DotStar, 'assets/sprites/stars/dot_star.png'],
 ]);
 
 export const sounds = new Map<Resources, string>([

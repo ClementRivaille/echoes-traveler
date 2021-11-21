@@ -67,4 +67,14 @@ export default class Particles {
       alpha: { start: 0.8, end: 0.2 },
     });
   }
+
+  makeCircleExplosionEmitter() {
+    return this.circleParticleManager.createEmitter({
+      lifespan: { min: 2000, max: 4000 },
+      frequency: -1,
+      speed: { min: 40, max: 140 },
+      scale: { start: 1, end: 0 },
+      alpha: { start: 1, end: 0.3 },
+    });
+  }
 }
