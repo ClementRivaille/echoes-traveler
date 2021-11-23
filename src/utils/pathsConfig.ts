@@ -82,7 +82,11 @@ const pathsConfig: PahtConfig[] = [
     ],
     torchX: TORCH_POSITION,
     torchY: -TORCH_POSITION,
-    hint: [Resources.city_A_melody_vibra, Resources.city_marimba_rtm_A],
+    hint: [
+      Resources.city_A_melody_vibra,
+      Resources.city_marimba_rtm_A,
+      Resources.city_chord_G,
+    ],
   },
   {
     id: 'celtic',
@@ -99,7 +103,11 @@ const pathsConfig: PahtConfig[] = [
     ],
     torchX: -TORCH_POSITION,
     torchY: -TORCH_POSITION,
-    hint: [Resources.hub_celtic_clue, Resources.celtic_C_harp],
+    hint: [
+      Resources.hub_celtic_clue,
+      Resources.celtic_C_harp,
+      Resources.celtic_C_guitar,
+    ],
   },
 ];
 export default pathsConfig;

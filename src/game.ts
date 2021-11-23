@@ -271,8 +271,7 @@ export default class Game extends Phaser.Scene {
     }
     this.pathValidated += 1;
 
-    // if (this.pathValidated === this.paths.length) {
-    if (this.pathValidated === 1) {
+    if (this.pathValidated === this.paths.length) {
       this.state = GameState.Ending;
       this.player.deactivate();
       this.ending.start();
