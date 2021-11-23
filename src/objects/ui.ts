@@ -62,9 +62,9 @@ export default class UI {
     this.pressStart.setShadow(-5, 5, '#00000022', 2);
 
     this.top = this.initText(0, -320, '', DIALOG_STYLE);
-    this.top.setShadow(-8, 8, '#00000022', 2);
+    this.top.setShadow(-6, 6, '#00000022', 2);
     this.bottom = this.initText(0, 320, '', DIALOG_STYLE);
-    this.bottom.setShadow(-8, 8, '#00000022', 2);
+    this.bottom.setShadow(-6, 6, '#00000022', 2);
     this.top.alpha = 0;
     this.bottom.alpha = 0;
   }
@@ -146,25 +146,51 @@ export default class UI {
     return promisifyTween(this.tweens.loading);
   }
 
-  showCredits(x: number, y: number) {
-    this.blackScreen.setPosition(x, y);
-    this.game.tweens.add({
-      targets: [this.blackScreen],
-      alpha: 0.6,
-      duration: DIALOG_FADEIN,
-      ease: 'Sine.easeIn',
-    });
-
+  async showCredits(x: number, y: number) {
     const thanks = this.initText(x, y - 200, 'Thank you for playing', {
       ...DIALOG_STYLE,
       fontSize: '50px',
     });
     thanks.setAlpha(0);
+    thanks.setShadow(4, 4, '#00000044', 4);
 
     this.game.tweens.add({
       targets: [thanks],
       alpha: 1,
       duration: DIALOG_FADEIN,
+      ease: 'Sine.easeInOut',
+    });
+
+    await yieldTimeout(2000);
+
+    const writtenBy = this.initText(x, y + 100, 'Composed and developed by', {
+      fontFamily: Font.ataristocrat,
+      fontSize: '32px',
+    });
+    const itooh = this.initText(x, y + 140, 'Itooh', {
+      fontFamily: Font.ataristocrat,
+      fontSize: '64px',
+    });
+    const assets = this.initText(
+      x,
+      y + 250,
+      '“Pixel Art Top Down Basic” assets pack by Cairo',
+      {
+        fontFamily: Font.ataristocrat,
+        fontSize: '32px',
+      }
+    );
+    writtenBy.setAlpha(0);
+    itooh.setAlpha(0);
+    assets.setAlpha(0);
+    writtenBy.setShadow(4, 4, '#00000044', 4);
+    itooh.setShadow(4, 4, '#00000044', 4);
+    assets.setShadow(4, 4, '#00000044', 4);
+
+    this.game.tweens.add({
+      targets: [writtenBy, itooh, assets],
+      alpha: 1,
+      duration: 2000,
       ease: 'Sine.easeInOut',
     });
   }
@@ -208,6 +234,7 @@ export default class UI {
     });
     textObj.setDepth(UI_DEPTH);
     textObj.setOrigin(0.5, 0.5);
+    textObj.setPadding(16);
     return textObj;
   }
 
