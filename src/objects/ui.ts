@@ -22,6 +22,7 @@ export default class UI {
 
   private title: Phaser.GameObjects.Text;
   private pressStart: Phaser.GameObjects.Text;
+  private subdialog: Phaser.GameObjects.Text;
 
   private top: Phaser.GameObjects.Text;
   private bottom: Phaser.GameObjects.Text;
@@ -56,10 +57,15 @@ export default class UI {
       fontSize: '110px',
     });
     this.title.setShadow(-5, 10, '#00000022', 6);
-    this.pressStart = this.initText(0, 150, 'Press Enter to begin', {
+    this.pressStart = this.initText(0, 120, 'Press Enter to begin', {
       fontSize: '50px',
     });
     this.pressStart.setShadow(-5, 5, '#00000022', 2);
+    this.subdialog = this.initText(0, 300, 'Better played with headphones!', {
+      fontSize: '32px',
+    });
+    this.subdialog.setShadow(-2, 2, '#00000022', 2);
+    this.subdialog.setAlpha(0.4);
 
     this.top = this.initText(0, -320, '', DIALOG_STYLE);
     this.top.setShadow(-6, 6, '#00000022', 2);
@@ -210,7 +216,7 @@ export default class UI {
 
   private fadeOutTitle() {
     return promisifyTween(
-      this.fadeText([this.title, this.pressStart], false, 500)
+      this.fadeText([this.title, this.pressStart, this.subdialog], false, 500)
     );
   }
 
