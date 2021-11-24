@@ -10,10 +10,15 @@ const GREEN = 0xc6f78f;
 const SIZE = 46;
 const INDICATOR_DEPTH = 2;
 
+const STAY_DELAY = 1000;
+
 export default class Indicator {
   private colorLight: Phaser.GameObjects.Sprite;
   private radio?: HintRadio;
-  private validated = false;
+  public validated = false;
+
+  private coroutine = -1;
+  private stayCallback?: () => void;
 
   constructor(
     game: Phaser.Scene,
@@ -65,7 +70,27 @@ export default class Indicator {
     }
   }
 
+  public watchStay(callback: () => void) {
+    this.stayCallback = callback;
+  }
+  public unwatchStay() {
+    delete this.stayCallback;
+  }
+
   private setRadioState(value: boolean) {
     this.colorLight.tint = value ? BLUE : GREY;
+
+    if (value && !!this.stayCallback) {
+      this.coroutine = setTimeout(() => this.onStay(), STAY_DELAY);
+    } else if (this.coroutine > -1) {
+      clearTimeout(this.coroutine);
+      this.coroutine = -1;
+    }
+  }
+
+  private onStay() {
+    if (this.stayCallback) {
+      this.stayCallback();
+    }
   }
 }

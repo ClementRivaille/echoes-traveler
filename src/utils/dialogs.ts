@@ -6,6 +6,7 @@ interface Dialog {
 export enum DialogName {
   FirstSteps,
   Goal,
+  Hints,
   Camera,
 }
 
@@ -19,8 +20,12 @@ export const dialogs: Dialogs = {
     bottom: 'Complete the path',
   },
   [DialogName.Goal]: {
-    top: 'Others are hidden around the world',
-    bottom: 'Listen to their sound, explore, and find them',
+    top: `To find the others, you'll have explore the world`,
+    bottom: 'Listen to their sound before leaving',
+  },
+  [DialogName.Hints]: {
+    top: 'This signal comes from a far away place',
+    bottom: 'A path will awaits you there. Find it and complete it.',
   },
   [DialogName.Camera]: {
     top: "Your sight won't follow you further",

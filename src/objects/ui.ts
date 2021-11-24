@@ -18,7 +18,7 @@ interface TextTweens {
 export default class UI {
   private loading: Phaser.GameObjects.Text;
   private blackScreen: Phaser.GameObjects.Rectangle;
-  private loadingInterval: NodeJS.Timeout;
+  private loadingInterval: number;
 
   private title: Phaser.GameObjects.Text;
   private pressStart: Phaser.GameObjects.Text;
@@ -99,47 +99,34 @@ export default class UI {
     } catch (e) {}
   }
 
-  async showGoal() {
+  async showDialog(dialog: DialogName, last = false) {
     try {
-      this.displayedDialog = DialogName.Goal;
-      if (this.tweens.dialogs) {
-        this.tweens.dialogs.stop(1);
-      }
-      await this.fadeDialog(false);
+      this.displayedDialog = dialog;
 
-      this.loadDialog(DialogName.Goal);
-      await this.fadeDialog(true);
-
-      await yieldTimeout(4000);
-      if (this.displayedDialog !== DialogName.Goal) return;
-
-      await this.fadeDialog(false);
-      delete this.tweens.dialogs;
-      delete this.displayedDialog;
-    } catch (e) {
-      // Interrupted
-    }
-  }
-
-  async showCamera() {
-    try {
-      this.displayedDialog = DialogName.Camera;
+      // Stop current tweens
       if (this.tweens.dialogs) {
         this.tweens.dialogs.stop();
       }
+
+      // Fade out displayed text
       if (this.top.alpha > 0) {
         await this.fadeDialog(false);
       }
 
-      this.loadDialog(DialogName.Camera);
+      // Show new text
+      this.loadDialog(dialog);
       await this.fadeDialog(true);
 
-      await yieldTimeout(5000);
-      if (this.displayedDialog !== DialogName.Camera) return;
+      if (last) {
+        // Hide dialogs
+        await yieldTimeout(5000);
+        if (this.displayedDialog !== dialog) return;
 
-      await this.fadeDialog(false);
+        await this.fadeDialog(false);
+        delete this.displayedDialog;
+      }
+
       delete this.tweens.dialogs;
-      delete this.displayedDialog;
     } catch (e) {}
   }
 

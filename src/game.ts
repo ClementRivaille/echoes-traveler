@@ -3,22 +3,22 @@ import 'phaser';
 import Area from './objects/area';
 import Borders from './objects/Borders';
 import CollisionManager from './objects/collisionManager';
+import Ending from './objects/ending';
 import Indicator from './objects/indicator';
 import Path from './objects/path';
 import Player from './objects/player';
 import SoundEmitter from './objects/soundEmitter';
+import UI from './objects/ui';
 import World from './objects/world';
+import { spritesDimensions } from './utils/animation';
 import { areasConfig, soundEmittersConfig } from './utils/audioConfig';
+import { DialogName } from './utils/dialogs';
+import { loadFonts } from './utils/fonts';
 import Instruments from './utils/instruments';
+import Particles from './utils/particles';
 import pathsConfig from './utils/pathsConfig';
 import { images, Resources, sprites } from './utils/resources';
 import Sounds from './utils/Sounds';
-import UI from './objects/ui';
-import { loadFonts } from './utils/fonts';
-import { Part, StateTimeline } from 'tone';
-import Ending from './objects/ending';
-import Particles from './utils/particles';
-import { spritesDimensions } from './utils/animation';
 
 enum GameState {
   Preload,
@@ -27,6 +27,13 @@ enum GameState {
   Playing,
   Ending,
   Credits,
+}
+
+enum TutorialStep {
+  Path,
+  Goal,
+  Signal,
+  Completed,
 }
 
 export default class Game extends Phaser.Scene {
@@ -56,7 +63,7 @@ export default class Game extends Phaser.Scene {
 
   private state: GameState = GameState.Preload;
   private loaded = false;
-  private tutorial = false;
+  private tutorial = TutorialStep.Path;
 
   constructor() {
     super('game');
@@ -202,7 +209,7 @@ export default class Game extends Phaser.Scene {
     Game.collisionsManager.update();
     this.soundEmitters.forEach((emitter) => emitter.update());
 
-    if (this.tutorial) {
+    if (this.tutorial !== TutorialStep.Completed) {
       const playerPosition = this.player.getPosition();
       const playerHeight = spritesDimensions[Resources.GhostSpritesheet].height;
       if (
@@ -210,8 +217,8 @@ export default class Game extends Phaser.Scene {
         playerPosition.y > this.camera.height / 2 + playerHeight ||
         playerPosition.y < -this.camera.height / 2
       ) {
-        this.ui.showCamera();
-        this.tutorial = false;
+        this.ui.showDialog(DialogName.Camera, true);
+        this.tutorial = TutorialStep.Completed;
       }
     }
 
@@ -260,7 +267,7 @@ export default class Game extends Phaser.Scene {
 
   private async startGame() {
     await this.player.activate();
-    this.tutorial = true;
+    this.tutorial = TutorialStep.Path;
     await this.ui.showFirstSteps();
   }
 
@@ -277,18 +284,42 @@ export default class Game extends Phaser.Scene {
       this.ending.start();
     }
 
-    if (this.pathValidated === 1) {
-      this.borders.desactivate();
-      this.ui.showGoal();
+    if (this.tutorial === TutorialStep.Path) {
+      this.tutorial = TutorialStep.Goal;
+      this.ui.showDialog(DialogName.Goal);
+
+      this.indicators.forEach((indicator) => {
+        if (!indicator.validated) {
+          indicator.watchStay(() => this.onListenToHint());
+        }
+      });
     }
   }
 
   private onBorderCollide() {
     Game.sounds.play(Resources.Block);
-    this.indicators[0].blink();
+
+    if (this.tutorial == TutorialStep.Path) {
+      this.indicators[0].blink();
+    } else if (this.tutorial == TutorialStep.Goal) {
+      this.indicators.forEach((indicator) => {
+        if (!indicator.validated) {
+          indicator.blink();
+        }
+      });
+    }
   }
 
-  private winGame() {}
+  private onListenToHint() {
+    this.tutorial = TutorialStep.Signal;
+    this.borders.desactivate();
+    this.ui.showDialog(DialogName.Hints);
+    this.indicators.forEach((indicator) => {
+      if (!indicator.validated) {
+        indicator.unwatchStay();
+      }
+    });
+  }
 }
 
 const config: Phaser.Types.Core.GameConfig = {
