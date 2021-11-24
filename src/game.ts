@@ -306,10 +306,7 @@ export default class Game extends Phaser.Scene {
     if (this.pathValidated > 1 && this.pathValidated < this.paths.length) {
       this.updateSave();
     } else if (this.pathValidated === this.paths.length) {
-      this.state = GameState.Ending;
-      this.player.deactivate();
-      this.ending.start();
-      eraseSave();
+      this.win();
     }
   }
 
@@ -336,6 +333,14 @@ export default class Game extends Phaser.Scene {
         indicator.unwatchStay();
       }
     });
+  }
+
+  private async win() {
+    this.state = GameState.Ending;
+    this.player.deactivate();
+    await Game.orchestre.wait(1);
+    this.ending.start();
+    eraseSave();
   }
 
   private loadSave(file: SaveFile) {

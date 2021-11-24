@@ -26,7 +26,7 @@ export const areasConfig: AreaConfig[] = [
     width: 3,
     height: 6,
     music: Resources.city_bg,
-    measure: 8,
+    measure: 32,
   },
   {
     x: -1.5,

@@ -25,7 +25,7 @@ export const dialogs: Dialogs = {
   },
   [DialogName.Hints]: {
     top: 'This signal comes from a far away place',
-    bottom: 'A path will awaits you there. Find it and complete it.',
+    bottom: 'A path will await you there. Find it and complete it.',
   },
   [DialogName.Camera]: {
     top: "Your sight won't follow you further",
