@@ -75,6 +75,10 @@ export default class UI {
     this.bottom.alpha = 0;
   }
 
+  setFileDetected() {
+    this.subdialog.setText('Last save loaded');
+  }
+
   hideTitle(loaded: boolean) {
     const titleTweenPromise = this.fadeOutTitle();
     if (!loaded) {
@@ -186,6 +190,19 @@ export default class UI {
       duration: 2000,
       ease: 'Sine.easeInOut',
     });
+  }
+
+  async showAutomaticSave() {
+    await yieldTimeout(1500);
+    this.subdialog.setText('Progress saved');
+    this.game.tweens.add({
+      targets: [this.subdialog],
+      alpha: 0.4,
+      ease: 'Sine.easeInOut',
+      duration: 600,
+    });
+    await yieldTimeout(2000);
+    this.fadeText([this.subdialog], false, 400);
   }
 
   private fadeText(

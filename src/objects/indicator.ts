@@ -1,4 +1,5 @@
 import { yieldTimeout } from '../utils/animation';
+import { PathId } from '../utils/pathsConfig';
 import { Resources } from '../utils/resources';
 import HintRadio from './hintRadio';
 
@@ -24,7 +25,7 @@ export default class Indicator {
     game: Phaser.Scene,
     x: number,
     y: number,
-    public id: string,
+    public readonly id: PathId,
     hint?: Resources[]
   ) {
     this.colorLight = game.add.sprite(x, y, Resources.IndicatorLightColor);

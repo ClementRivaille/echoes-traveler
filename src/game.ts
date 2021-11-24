@@ -16,8 +16,9 @@ import { DialogName } from './utils/dialogs';
 import { loadFonts } from './utils/fonts';
 import Instruments from './utils/instruments';
 import Particles from './utils/particles';
-import pathsConfig from './utils/pathsConfig';
+import pathsConfig, { PathId } from './utils/pathsConfig';
 import { images, Resources, sprites } from './utils/resources';
+import { eraseSave, loadSave, save, SaveFile } from './utils/save';
 import Sounds from './utils/Sounds';
 
 enum GameState {
@@ -185,6 +186,12 @@ export default class Game extends Phaser.Scene {
       () => this.onBorderCollide()
     );
 
+    // Save
+    const file = loadSave();
+    if (file) {
+      this.loadSave(file);
+    }
+
     // Controls
     const enter = this.input.keyboard.addKey('ENTER');
     enter.on('down', () => this.onPressStart());
@@ -239,6 +246,9 @@ export default class Game extends Phaser.Scene {
     await loadFonts();
     this.ui.init();
     this.state = GameState.Title;
+    if (this.pathValidated > 0) {
+      this.ui.setFileDetected();
+    }
   }
 
   private async onResourcesLoaded() {
@@ -267,8 +277,12 @@ export default class Game extends Phaser.Scene {
 
   private async startGame() {
     await this.player.activate();
-    this.tutorial = TutorialStep.Path;
-    await this.ui.showFirstSteps();
+
+    if (this.tutorial === TutorialStep.Path) {
+      await this.ui.showFirstSteps();
+    } else {
+      this.borders.desactivate();
+    }
   }
 
   private validatePath(id: string) {
@@ -277,12 +291,6 @@ export default class Game extends Phaser.Scene {
       indicator.validate();
     }
     this.pathValidated += 1;
-
-    if (this.pathValidated === this.paths.length) {
-      this.state = GameState.Ending;
-      this.player.deactivate();
-      this.ending.start();
-    }
 
     if (this.tutorial === TutorialStep.Path) {
       this.tutorial = TutorialStep.Goal;
@@ -293,6 +301,15 @@ export default class Game extends Phaser.Scene {
           indicator.watchStay(() => this.onListenToHint());
         }
       });
+    }
+
+    if (this.pathValidated > 1 && this.pathValidated < this.paths.length) {
+      this.updateSave();
+    } else if (this.pathValidated === this.paths.length) {
+      this.state = GameState.Ending;
+      this.player.deactivate();
+      this.ending.start();
+      eraseSave();
     }
   }
 
@@ -319,6 +336,35 @@ export default class Game extends Phaser.Scene {
         indicator.unwatchStay();
       }
     });
+  }
+
+  private loadSave(file: SaveFile) {
+    for (const path of this.paths) {
+      if (file[path.id]) {
+        this.pathValidated += 1;
+        path.disable();
+        const indicator = this.indicators.find(
+          (indicator) => indicator.id === path.id
+        );
+        indicator.validate();
+      }
+    }
+    this.tutorial = TutorialStep.Completed;
+  }
+
+  private updateSave() {
+    const file: SaveFile = {
+      [PathId.hub]: true,
+      [PathId.city]: false,
+      [PathId.sea]: false,
+      [PathId.celtic]: false,
+      [PathId.desert]: false,
+    };
+    for (const path of this.paths) {
+      file[path.id] = path.validated;
+    }
+    save(file);
+    this.ui.showAutomaticSave();
   }
 }
 

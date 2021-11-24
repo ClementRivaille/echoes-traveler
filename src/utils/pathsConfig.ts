@@ -4,8 +4,16 @@ import { TILE_SIZE } from '../objects/tile';
 import { areasConfig } from './audioConfig';
 import { Resources } from './resources';
 
+export enum PathId {
+  hub = 'hub',
+  desert = 'desert',
+  sea = 'sea',
+  city = 'city',
+  celtic = 'celtic',
+}
+
 interface PahtConfig {
-  id: string;
+  id: PathId;
   x: number;
   y: number;
   directions: Directions[];
@@ -18,7 +26,7 @@ const TORCH_POSITION = 250;
 
 const pathsConfig: PahtConfig[] = [
   {
-    id: 'hub',
+    id: PathId.hub,
     x: -TILE_SIZE,
     y: -TILE_SIZE,
     directions: [
@@ -34,7 +42,7 @@ const pathsConfig: PahtConfig[] = [
     torchY: 0,
   },
   {
-    id: 'desert',
+    id: PathId.desert,
     x: areasConfig[4].x * UNIT,
     y: areasConfig[4].y * UNIT,
     directions: [
@@ -51,7 +59,7 @@ const pathsConfig: PahtConfig[] = [
     hint: [Resources.desert_B_terje, Resources.desert_B_drum],
   },
   {
-    id: 'sea',
+    id: PathId.sea,
     x: (areasConfig[3].x - 1) * UNIT,
     y: (areasConfig[3].y - 0.8) * UNIT,
     directions: [
@@ -68,7 +76,7 @@ const pathsConfig: PahtConfig[] = [
     hint: [Resources.sea_B_synth, Resources.sea_C_oboe],
   },
   {
-    id: 'city',
+    id: PathId.city,
     x: (areasConfig[1].x - 0.4) * UNIT,
     y: (areasConfig[1].y - 2.3) * UNIT,
     directions: [
@@ -89,7 +97,7 @@ const pathsConfig: PahtConfig[] = [
     ],
   },
   {
-    id: 'celtic',
+    id: PathId.celtic,
     x: (areasConfig[2].x + 2) * UNIT,
     y: (areasConfig[2].y + 0.2) * UNIT,
     directions: [

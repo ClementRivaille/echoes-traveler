@@ -1,10 +1,9 @@
 import 'phaser';
-import Tile, { TILE_SIZE, TileState } from './tile';
-import CollisionManager from './collisionManager';
-import Instruments, { InstrumentType } from '../utils/instruments';
-import Sounds from '../utils/Sounds';
-import { Resources } from '../utils/resources';
 import Game from '../game';
+import Instruments, { InstrumentType } from '../utils/instruments';
+import { PathId } from '../utils/pathsConfig';
+import { Resources } from '../utils/resources';
+import Tile, { TileState, TILE_SIZE } from './tile';
 
 export enum Directions {
   Up,
@@ -31,7 +30,7 @@ export default class Path {
     game: Phaser.Scene,
     x: number,
     y: number,
-    private id: string,
+    public readonly id: PathId,
     directions: Directions[],
     private instruments: Instruments,
     private onValidateCallback: (id: string) => void
@@ -69,6 +68,14 @@ export default class Path {
         );
       }),
     ];
+  }
+
+  public disable() {
+    this.state = PathState.Validated;
+  }
+
+  public get validated() {
+    return this.state === PathState.Validated;
   }
 
   private onTileEnter(value: number, state: TileState) {
@@ -183,6 +190,7 @@ export default class Path {
 
   private validate() {
     this.state = PathState.Validated;
+
     this.tiles.forEach((tile) => tile.setState(TileState.Completed));
     Game.sounds.play(Resources.ValidatePath);
     this.onValidateCallback(this.id);
