@@ -288,7 +288,7 @@ export default class Game extends Phaser.Scene {
   private validatePath(id: string) {
     const indicator = this.indicators.find((indic) => indic.id === id);
     if (indicator) {
-      indicator.validate();
+      indicator.validate(true);
     }
     this.pathValidated += 1;
 

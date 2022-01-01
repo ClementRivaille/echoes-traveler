@@ -77,4 +77,14 @@ export default class Particles {
       alpha: { start: 1, end: 0.3 },
     });
   }
+
+  makeLightSparklesEmitter() {
+    return this.circleParticleManager.createEmitter({
+      lifespan: { min: 300, max: 500 },
+      frequency: -1,
+      speed: { min: 120, max: 180 },
+      scale: { start: 1.2, end: 0 },
+      alpha: { start: 0, end: 0.6 },
+    });
+  }
 }

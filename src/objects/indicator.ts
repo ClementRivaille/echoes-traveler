@@ -1,3 +1,4 @@
+import Game from '../game';
 import { yieldTimeout } from '../utils/animation';
 import { PathId } from '../utils/pathsConfig';
 import { Resources } from '../utils/resources';
@@ -20,6 +21,8 @@ export default class Indicator {
 
   private coroutine = -1;
   private stayCallback?: () => void;
+
+  private particles: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor(
     game: Phaser.Scene,
@@ -45,17 +48,23 @@ export default class Indicator {
       this.radio.onEnter = () => this.setRadioState(true);
       this.radio.onExit = () => this.setRadioState(false);
     }
+
+    this.particles = Game.particles.makeLightSparklesEmitter();
   }
 
   public load() {
     return this.radio ? this.radio.load() : Promise.resolve();
   }
 
-  public validate() {
+  public validate(animate = false) {
     this.colorLight.tint = GREEN;
     this.validated = true;
     if (this.radio) {
       this.radio.activated = false;
+    }
+
+    if (animate) {
+      this.particles.explode(6, this.colorLight.x, this.colorLight.y);
     }
   }
 
