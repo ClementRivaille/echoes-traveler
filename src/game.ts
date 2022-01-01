@@ -368,8 +368,8 @@ export default class Game extends Phaser.Scene {
     for (const path of this.paths) {
       file[path.id] = path.validated;
     }
-    save(file);
-    this.ui.showAutomaticSave();
+    const saved = save(file);
+    this.ui.showAutomaticSave(saved);
   }
 }
 

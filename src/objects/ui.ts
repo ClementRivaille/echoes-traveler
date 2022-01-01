@@ -171,7 +171,7 @@ export default class UI {
     const assets = this.initText(
       x,
       y + 250,
-      '“Pixel Art Top Down Basic” assets pack by Cairo',
+      '“Pixel Art Top Down Basic” assets pack by Cainos',
       {
         fontFamily: Font.ataristocrat,
         fontSize: '32px',
@@ -192,9 +192,11 @@ export default class UI {
     });
   }
 
-  async showAutomaticSave() {
+  async showAutomaticSave(success: boolean) {
     await yieldTimeout(1500);
-    this.subdialog.setText('Progress saved');
+    this.subdialog.setText(
+      success ? 'Progress saved' : 'Error: unabled to save'
+    );
     this.game.tweens.add({
       targets: [this.subdialog],
       alpha: 0.4,
