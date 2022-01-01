@@ -23,7 +23,7 @@ export default class HintRadio {
 
   public onEnter?: () => void;
   public onExit?: () => void;
-  public activated = true;
+  public activated = false;
 
   constructor(
     private game: Phaser.Scene,

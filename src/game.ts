@@ -299,6 +299,7 @@ export default class Game extends Phaser.Scene {
       this.indicators.forEach((indicator) => {
         if (!indicator.validated) {
           indicator.watchStay(() => this.onListenToHint());
+          indicator.activateRadio();
         }
       });
     }
@@ -345,13 +346,15 @@ export default class Game extends Phaser.Scene {
 
   private loadSave(file: SaveFile) {
     for (const path of this.paths) {
+      const indicator = this.indicators.find(
+        (indicator) => indicator.id === path.id
+      );
       if (file[path.id]) {
         this.pathValidated += 1;
         path.disable();
-        const indicator = this.indicators.find(
-          (indicator) => indicator.id === path.id
-        );
         indicator.validate();
+      } else {
+        indicator.activateRadio();
       }
     }
     this.tutorial = TutorialStep.Completed;

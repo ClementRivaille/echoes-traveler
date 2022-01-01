@@ -78,6 +78,12 @@ export default class Indicator {
     delete this.stayCallback;
   }
 
+  public activateRadio() {
+    if (this.radio) {
+      this.radio.activated = true;
+    }
+  }
+
   private setRadioState(value: boolean) {
     this.colorLight.tint = value ? BLUE : GREY;
 
