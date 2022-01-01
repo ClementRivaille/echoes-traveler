@@ -1,8 +1,8 @@
 import commonjs from 'rollup-plugin-commonjs';
 import resolve from 'rollup-plugin-node-resolve';
 import replace from '@rollup/plugin-replace';
-import { uglify } from 'rollup-plugin-uglify';
 import typescript from 'rollup-plugin-typescript2';
+import { terser } from 'rollup-plugin-terser'
 
 export default {
   //  Our games entry point (edit as required)
@@ -28,7 +28,8 @@ export default {
       'typeof EXPERIMENTAL': JSON.stringify(true),
       'typeof PLUGIN_CAMERA3D': JSON.stringify(false),
       'typeof PLUGIN_FBINSTANT': JSON.stringify(false),
-      'typeof FEATURE_SOUND': JSON.stringify(true)
+      'typeof FEATURE_SOUND': JSON.stringify(true),
+      preventAssignment: true
     }),
 
     //  Parse our .ts source files
@@ -49,11 +50,11 @@ export default {
     }),
 
     //  See https://www.npmjs.com/package/rollup-plugin-typescript2 for config options
-    typescript(),
+    typescript({
+      typescript: require('typescript'),
+      objectHashIgnoreUnknownHack: true,
+    }),
 
-    //  See https://www.npmjs.com/package/rollup-plugin-uglify for config options
-    uglify({
-      mangle: false
-    })
+    terser()
   ]
 };
