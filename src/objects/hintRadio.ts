@@ -88,7 +88,9 @@ export default class HintRadio {
   private enter() {
     if (!this.activated) return;
 
-    this.whiteNoise.start();
+    if (this.whiteNoise.state !== 'started') {
+      this.whiteNoise.start();
+    }
     for (const soundName of this.soundNames) {
       Game.orchestre.play(soundName, { now: true, fade: 0.2 });
     }
@@ -100,7 +102,9 @@ export default class HintRadio {
   private exit() {
     if (!this.activated) return;
 
-    this.whiteNoise.stop();
+    if (this.whiteNoise.state !== 'stopped') {
+      this.whiteNoise.stop();
+    }
     for (const soundName of this.soundNames) {
       Game.orchestre.stop(soundName, { now: true, fade: 0.2 });
     }
