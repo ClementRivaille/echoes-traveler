@@ -20,6 +20,8 @@ import pathsConfig, { PathId } from './utils/pathsConfig';
 import { images, Resources, sprites } from './utils/resources';
 import { eraseSave, loadSave, save, SaveFile } from './utils/save';
 import Sounds from './utils/Sounds';
+import { TouchInput } from './utils/mobile';
+import MobileUI from './objects/mobileUI';
 
 enum GameState {
   Preload,
@@ -41,6 +43,7 @@ export default class Game extends Phaser.Scene {
   private player: Player;
   private camera: Phaser.Cameras.Scene2D.Camera;
   private ui: UI;
+  private mobileUI: MobileUI;
 
   private paths: Path[] = [];
   private pathValidated = 0;
@@ -86,6 +89,7 @@ export default class Game extends Phaser.Scene {
   async create() {
     const resourcesLoading: Promise<void>[] = [];
     this.ui = new UI(this);
+    this.mobileUI = new MobileUI(this);
 
     this.camera = this.cameras.main;
     this.camera.scrollX = -this.camera.centerX;
@@ -101,7 +105,8 @@ export default class Game extends Phaser.Scene {
     trees.scale = 3.4;
     trees.setDepth(2);
 
-    this.player = new Player(this, 0, 0);
+    const touchInput = new TouchInput(this);
+    this.player = new Player(this, touchInput, 0, 0);
     this.world = new World(this.player);
 
     Game.collisionsManager = new CollisionManager(

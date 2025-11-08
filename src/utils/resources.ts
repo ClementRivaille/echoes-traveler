@@ -23,6 +23,7 @@ export enum Resources {
   MediumStar = 'MediumStar',
   SmallStar = 'SmallStar',
   DotStar = 'DotStar',
+  ArrowDown = 'ArrowUp',
 
   // ---- SOUNDS ----
 
@@ -169,6 +170,7 @@ export const images = new Map<Resources, string>([
   [Resources.TileNumber8, 'assets/sprites/tiles/tile_number_8.png'],
   [Resources.Shadow, 'assets/sprites/ghost/shadow.png'],
   [Resources.LightBridge, 'assets/sprites/ending/light_bridge.png'],
+  [Resources.ArrowDown, 'assets/sprites/mobile/arrow-down-lg.png'],
 ]);
 
 export const sprites = new Map<Resources, string>([
