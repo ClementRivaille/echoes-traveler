@@ -3,6 +3,8 @@ import Game from '../game';
 import { GhostAnimations, yieldTimeout } from '../utils/animation';
 import { Resources } from '../utils/resources';
 import GhostSprite, { AnimationDirection } from './ghostSprite';
+import { MOBILE_TOUCH_MARGIN } from '../utils/mobile';
+import { isDefined } from 'tone';
 
 const SPEED = 170;
 const PLAYER_DEPTH = 5;
@@ -11,12 +13,14 @@ export default class Player {
   public sprite: GhostSprite;
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  private pointers: Phaser.Input.Pointer[];
   private direction: Phaser.Math.Vector2 = new Phaser.Math.Vector2(0, 1);
   private active = false;
 
   constructor(private game: Phaser.Scene, x: number, y: number) {
     this.sprite = new GhostSprite(game, x, y);
     this.cursors = game.input.keyboard.createCursorKeys();
+    this.pointers = [game.input.pointer1, game.input.pointer2];
 
     this.sprite.setDepth(PLAYER_DEPTH);
   }
@@ -59,14 +63,34 @@ export default class Player {
 
     const direction = new Phaser.Math.Vector2(0, 0);
 
-    if (this.cursors.left.isDown) {
+    const touchPositions = this.pointers
+      .map((pointer) => (pointer.isDown ? pointer.position : undefined))
+      .filter(isDefined);
+
+    if (
+      this.cursors.left.isDown ||
+      touchPositions.some((pos) => pos.x <= MOBILE_TOUCH_MARGIN)
+    ) {
       direction.x = -1;
-    } else if (this.cursors.right.isDown) {
+    } else if (
+      this.cursors.right.isDown ||
+      touchPositions.some(
+        (pos) => pos.x >= this.game.renderer.width - MOBILE_TOUCH_MARGIN
+      )
+    ) {
       direction.x = 1;
     }
-    if (this.cursors.up.isDown) {
+    if (
+      this.cursors.up.isDown ||
+      touchPositions.some((pos) => pos.y <= MOBILE_TOUCH_MARGIN)
+    ) {
       direction.y = -1;
-    } else if (this.cursors.down.isDown) {
+    } else if (
+      this.cursors.down.isDown ||
+      touchPositions.some(
+        (pos) => pos.y >= this.game.renderer.height - MOBILE_TOUCH_MARGIN
+      )
+    ) {
       direction.y = 1;
     }
 

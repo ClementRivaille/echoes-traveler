@@ -91,6 +91,8 @@ export default class Game extends Phaser.Scene {
     this.camera.scrollX = -this.camera.centerX;
     this.camera.scrollY = -this.camera.centerY;
 
+    this.input.addPointer();
+
     resourcesLoading.push(this.loadTitle());
 
     const background = this.add.sprite(0, 0, Resources.Background);
@@ -195,6 +197,7 @@ export default class Game extends Phaser.Scene {
     // Controls
     const enter = this.input.keyboard.addKey('ENTER');
     enter.on('down', () => this.onPressStart());
+    this.input.on('pointerdown', () => this.onPressStart());
 
     // Ending
     this.ending = new Ending(
