@@ -97,8 +97,6 @@ export default class Game extends Phaser.Scene {
     this.camera.scrollX = -this.camera.centerX;
     this.camera.scrollY = -this.camera.centerY;
 
-    this.input.addPointer();
-
     resourcesLoading.push(this.loadTitle());
 
     const background = this.add.sprite(0, 0, Resources.Background);
@@ -286,6 +284,7 @@ export default class Game extends Phaser.Scene {
   }
 
   private async startGame() {
+    void this.mobileUI.activate();
     await this.player.activate();
 
     if (this.tutorial === TutorialStep.Path) {
@@ -349,6 +348,7 @@ export default class Game extends Phaser.Scene {
   private async win() {
     this.state = GameState.Ending;
     this.player.deactivate();
+    this.mobileUI.deactivate();
     await Game.orchestre.wait(1);
     this.ending.start();
     eraseSave();

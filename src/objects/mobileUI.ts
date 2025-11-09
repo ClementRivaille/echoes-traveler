@@ -1,6 +1,7 @@
 import 'phaser';
 import { MOBILE_TOUCH_MARGIN, TouchInput } from '../utils/mobile';
 import { Resources } from '../utils/resources';
+import { promisifyTween } from '../utils/animation';
 
 const MOBILE_UI_DEPTH = 8;
 
@@ -15,6 +16,8 @@ export default class MobileUI {
   private rightSprite: Phaser.GameObjects.Sprite;
   private upSprite: Phaser.GameObjects.Sprite;
   private downSprite: Phaser.GameObjects.Sprite;
+
+  private active = false;
 
   constructor(private game: Phaser.Scene, private touchInput: TouchInput) {
     this.leftSprite = game.add.sprite(
@@ -46,17 +49,19 @@ export default class MobileUI {
       (sprite) => {
         sprite.setDepth(MOBILE_UI_DEPTH);
         sprite.setScale(ARROW_SCALE);
-        sprite.setAlpha(INACTIVE_ALPHA);
+        sprite.setAlpha(0);
       }
     );
   }
 
   update() {
-    const input = this.touchInput.readTouchDirections();
-    this.updateArrow(this.upSprite, input.up);
-    this.updateArrow(this.downSprite, input.down);
-    this.updateArrow(this.leftSprite, input.left);
-    this.updateArrow(this.rightSprite, input.right);
+    if (this.active) {
+      const input = this.touchInput.readTouchDirections();
+      this.updateArrow(this.upSprite, input.up);
+      this.updateArrow(this.downSprite, input.down);
+      this.updateArrow(this.leftSprite, input.left);
+      this.updateArrow(this.rightSprite, input.right);
+    }
   }
 
   updateArrow(sprite: Phaser.GameObjects.Sprite, active: boolean) {
@@ -64,5 +69,44 @@ export default class MobileUI {
     if (sprite.alpha !== targetAlpha) {
       sprite.setAlpha(targetAlpha);
     }
+  }
+
+  async activate(): Promise<void> {
+    await promisifyTween(
+      this.game.tweens.add({
+        targets: [
+          this.downSprite,
+          this.upSprite,
+          this.leftSprite,
+          this.rightSprite,
+        ],
+        alpha: INACTIVE_ALPHA,
+        ease: 'Sine.easeInOut',
+        duration: 300,
+      })
+    );
+    this.active = true;
+  }
+
+  async deactivate(): Promise<void> {
+    this.active = false;
+    [this.downSprite, this.leftSprite, this.upSprite, this.rightSprite].forEach(
+      (sprite) => {
+        sprite.setAlpha(INACTIVE_ALPHA);
+      }
+    );
+    await promisifyTween(
+      this.game.tweens.add({
+        targets: [
+          this.downSprite,
+          this.upSprite,
+          this.leftSprite,
+          this.rightSprite,
+        ],
+        alpha: 0,
+        ease: 'Sine.easeIn',
+        duration: 1000,
+      })
+    );
   }
 }
