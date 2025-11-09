@@ -1,5 +1,5 @@
 import 'phaser';
-import { isDefined } from 'tone';
+import { isDefined, now } from 'tone';
 export const MOBILE_TOUCH_MARGIN = 200;
 
 interface TouchDirections {
@@ -39,4 +39,12 @@ export class TouchInput {
 
 export function isMobile() {
   return navigator.maxTouchPoints > 1;
+}
+
+/**
+ * Prevent a sli
+ * @returns
+ */
+export function nowWithoutDelay() {
+  return Math.max(0, now() - 0.2);
 }

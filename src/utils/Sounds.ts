@@ -1,4 +1,5 @@
 import { Gain, Player } from 'tone';
+import { nowWithoutDelay } from './mobile';
 import { Resources, sounds } from './resources';
 
 export default class Sounds {
@@ -27,7 +28,7 @@ export default class Sounds {
   play(res: Resources) {
     const sound = this.players[res];
     if (sound) {
-      sound.start();
+      sound.start(nowWithoutDelay());
     }
   }
 }

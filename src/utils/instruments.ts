@@ -1,4 +1,5 @@
-import { Destination, FeedbackDelay, Reverb, Sampler } from 'tone';
+import { FeedbackDelay, Reverb, Sampler } from 'tone';
+import { nowWithoutDelay } from './mobile';
 
 export enum InstrumentType {
   Main = 'main',
@@ -68,6 +69,10 @@ export default class Instruments {
   }
 
   play(note: string, instrument: InstrumentType) {
-    this.instruments[instrument].triggerAttackRelease(note, 0.4);
+    this.instruments[instrument].triggerAttackRelease(
+      note,
+      0.4,
+      nowWithoutDelay()
+    );
   }
 }
