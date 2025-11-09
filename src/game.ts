@@ -88,8 +88,10 @@ export default class Game extends Phaser.Scene {
 
   async create() {
     const resourcesLoading: Promise<void>[] = [];
+    const touchInput = new TouchInput(this);
+
     this.ui = new UI(this);
-    this.mobileUI = new MobileUI(this);
+    this.mobileUI = new MobileUI(this, touchInput);
 
     this.camera = this.cameras.main;
     this.camera.scrollX = -this.camera.centerX;
@@ -105,7 +107,6 @@ export default class Game extends Phaser.Scene {
     trees.scale = 3.4;
     trees.setDepth(2);
 
-    const touchInput = new TouchInput(this);
     this.player = new Player(this, touchInput, 0, 0);
     this.world = new World(this.player);
 
@@ -239,6 +240,7 @@ export default class Game extends Phaser.Scene {
 
     if (this.state === GameState.Playing) {
       this.world.update();
+      this.mobileUI.update();
     }
     if (this.state === GameState.Ending) {
       this.ending.update();
