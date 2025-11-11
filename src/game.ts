@@ -20,7 +20,7 @@ import pathsConfig, { PathId } from './utils/pathsConfig';
 import { images, Resources, sprites } from './utils/resources';
 import { eraseSave, loadSave, save, SaveFile } from './utils/save';
 import Sounds from './utils/Sounds';
-import { isMobile, TouchInput } from './utils/mobile';
+import { DeviceInput, getDeviceInput, TouchInput } from './utils/mobile';
 import MobileUI from './objects/mobileUI';
 
 enum GameState {
@@ -91,7 +91,8 @@ export default class Game extends Phaser.Scene {
     const resourcesLoading: Promise<void>[] = [];
 
     const touchInput = new TouchInput(this);
-    this.isMobile = isMobile();
+    const deviceInput = getDeviceInput();
+    this.isMobile = deviceInput === 'touch';
 
     this.ui = new UI(this);
     this.mobileUI = new MobileUI(this, touchInput);
@@ -203,9 +204,9 @@ export default class Game extends Phaser.Scene {
 
     // Controls
     const enter = this.input.keyboard.addKey('ENTER');
-    enter.on('down', () => this.onPressStart());
-    if (this.isMobile) {
-      this.input.on('pointerdown', () => this.onPressStart());
+    enter.on('down', () => this.onPressStart('keyboard'));
+    if (['touch', 'hybrid'].includes(deviceInput)) {
+      this.input.on('pointerdown', () => this.onPressStart('touch'));
     }
 
     // Ending
@@ -257,7 +258,7 @@ export default class Game extends Phaser.Scene {
 
   private async loadTitle(): Promise<void> {
     await loadFonts();
-    this.ui.init(this.isMobile);
+    this.ui.init(getDeviceInput());
     this.state = GameState.Title;
     if (this.pathValidated > 0) {
       this.ui.setFileDetected();
@@ -276,7 +277,8 @@ export default class Game extends Phaser.Scene {
     }
   }
 
-  private async onPressStart() {
+  private async onPressStart(input: DeviceInput) {
+    this.isMobile = input === 'touch';
     if (this.state === GameState.Title) {
       this.state = GameState.Loading;
       const uiPromise = this.ui.hideTitle(this.loaded);

@@ -38,8 +38,14 @@ export class TouchInput {
   }
 }
 
-export function isMobile() {
-  return navigator.maxTouchPoints > 1;
+export type DeviceInput = 'keyboard' | 'touch' | 'hybrid';
+
+export function getDeviceInput(): DeviceInput {
+  const touchScreen = navigator.maxTouchPoints > 1;
+  const hasMouse = window.matchMedia('(any-hover: hover)').matches;
+
+  if (!touchScreen) return 'keyboard';
+  return hasMouse ? 'hybrid' : 'touch';
 }
 
 /**
