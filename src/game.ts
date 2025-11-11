@@ -208,6 +208,12 @@ export default class Game extends Phaser.Scene {
     if (['touch', 'hybrid'].includes(deviceInput)) {
       this.input.on('pointerdown', () => this.onPressStart('touch'));
     }
+    if (deviceInput === 'hybrid') {
+      this.input.on('pointerdown', () => this.updateInputMethod('touch'));
+      this.input.keyboard.on('keydown', () =>
+        this.updateInputMethod('keyboard')
+      );
+    }
 
     // Ending
     this.ending = new Ending(
@@ -395,6 +401,14 @@ export default class Game extends Phaser.Scene {
     }
     const saved = save(file);
     this.ui.showAutomaticSave(saved);
+  }
+
+  private updateInputMethod(input: DeviceInput) {
+    if (input === 'keyboard' && this.mobileUI.isActive()) {
+      this.mobileUI.deactivate();
+    } else if (input === 'touch' && !this.mobileUI.isActive()) {
+      this.mobileUI.activate();
+    }
   }
 }
 
