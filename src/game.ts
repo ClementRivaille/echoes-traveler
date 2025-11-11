@@ -20,7 +20,7 @@ import pathsConfig, { PathId } from './utils/pathsConfig';
 import { images, Resources, sprites } from './utils/resources';
 import { eraseSave, loadSave, save, SaveFile } from './utils/save';
 import Sounds from './utils/Sounds';
-import { TouchInput } from './utils/mobile';
+import { isMobile, TouchInput } from './utils/mobile';
 import MobileUI from './objects/mobileUI';
 
 enum GameState {
@@ -68,6 +68,7 @@ export default class Game extends Phaser.Scene {
   private state: GameState = GameState.Preload;
   private loaded = false;
   private tutorial = TutorialStep.Path;
+  private isMobile = false;
 
   constructor() {
     super('game');
@@ -88,7 +89,9 @@ export default class Game extends Phaser.Scene {
 
   async create() {
     const resourcesLoading: Promise<void>[] = [];
+
     const touchInput = new TouchInput(this);
+    this.isMobile = isMobile();
 
     this.ui = new UI(this);
     this.mobileUI = new MobileUI(this, touchInput);
@@ -150,9 +153,9 @@ export default class Game extends Phaser.Scene {
       resourcesLoading.push(emitter.load());
       return emitter;
     });
-    this.instruments = new Instruments();
+    this.instruments = new Instruments(this.isMobile);
     resourcesLoading.push(this.instruments.load());
-    Game.sounds = new Sounds();
+    Game.sounds = new Sounds(this.isMobile);
     resourcesLoading.push(Game.sounds.load());
 
     // Debug camera
@@ -201,7 +204,9 @@ export default class Game extends Phaser.Scene {
     // Controls
     const enter = this.input.keyboard.addKey('ENTER');
     enter.on('down', () => this.onPressStart());
-    this.input.on('pointerdown', () => this.onPressStart());
+    if (this.isMobile) {
+      this.input.on('pointerdown', () => this.onPressStart());
+    }
 
     // Ending
     this.ending = new Ending(
@@ -252,7 +257,7 @@ export default class Game extends Phaser.Scene {
 
   private async loadTitle(): Promise<void> {
     await loadFonts();
-    this.ui.init();
+    this.ui.init(this.isMobile);
     this.state = GameState.Title;
     if (this.pathValidated > 0) {
       this.ui.setFileDetected();
@@ -284,11 +289,14 @@ export default class Game extends Phaser.Scene {
   }
 
   private async startGame() {
-    void this.mobileUI.activate();
+    if (this.isMobile) {
+      void this.mobileUI.activate();
+    }
+
     await this.player.activate();
 
     if (this.tutorial === TutorialStep.Path) {
-      await this.ui.showFirstSteps();
+      await this.ui.showFirstSteps(this.isMobile);
     } else {
       this.borders.desactivate();
     }
@@ -348,7 +356,9 @@ export default class Game extends Phaser.Scene {
   private async win() {
     this.state = GameState.Ending;
     this.player.deactivate();
-    this.mobileUI.deactivate();
+    if (this.isMobile && this.mobileUI.isActive()) {
+      this.mobileUI.deactivate();
+    }
     await Game.orchestre.wait(1);
     this.ending.start();
     eraseSave();

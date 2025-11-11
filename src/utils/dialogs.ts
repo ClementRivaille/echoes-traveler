@@ -5,6 +5,7 @@ interface Dialog {
 
 export enum DialogName {
   FirstSteps,
+  FirstStepsMobile,
   Goal,
   Hints,
   Camera,
@@ -17,6 +18,10 @@ type Dialogs = {
 export const dialogs: Dialogs = {
   [DialogName.FirstSteps]: {
     top: 'Move with arrow keys',
+    bottom: 'Complete the path',
+  },
+  [DialogName.FirstStepsMobile]: {
+    top: `Touch the screen's edges to move`,
     bottom: 'Complete the path',
   },
   [DialogName.Goal]: {

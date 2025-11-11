@@ -46,7 +46,7 @@ export default class UI {
     this.blackScreen.setDepth(UI_DEPTH - 1);
   }
 
-  init() {
+  init(mobile = false) {
     // Refresh loading font
     this.loading.style.setFontFamily(Font.ataristocrat);
     this.loading.alpha = 0;
@@ -57,9 +57,14 @@ export default class UI {
       fontSize: '110px',
     });
     this.title.setShadow(-5, 10, '#00000022', 6);
-    this.pressStart = this.initText(0, 120, 'Press Enter to begin', {
-      fontSize: '50px',
-    });
+    this.pressStart = this.initText(
+      0,
+      120,
+      mobile ? 'Touch screen to begin' : 'Press Enter to begin',
+      {
+        fontSize: '50px',
+      }
+    );
     this.pressStart.setShadow(-5, 5, '#00000022', 2);
     this.subdialog = this.initText(0, 300, 'Better played with headphones!', {
       fontSize: '32px',
@@ -89,8 +94,10 @@ export default class UI {
     return titleTweenPromise;
   }
 
-  async showFirstSteps() {
-    this.loadDialog(DialogName.FirstSteps);
+  async showFirstSteps(mobile = false) {
+    this.loadDialog(
+      mobile ? DialogName.FirstStepsMobile : DialogName.FirstSteps
+    );
     this.displayedDialog = DialogName.FirstSteps;
     await promisifyTween(this.fadeText([this.top], true, DIALOG_FADEIN));
     await yieldTimeout(2500);

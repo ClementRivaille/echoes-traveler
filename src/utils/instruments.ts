@@ -10,7 +10,7 @@ export default class Instruments {
   private instruments: { [key: string]: Sampler };
   private loading: Promise<any>;
 
-  constructor() {
+  constructor(private isMobile: boolean) {
     const promises = [];
     this.instruments = {};
 
@@ -72,7 +72,7 @@ export default class Instruments {
     this.instruments[instrument].triggerAttackRelease(
       note,
       0.4,
-      nowWithoutDelay()
+      this.isMobile ? nowWithoutDelay() : undefined
     );
   }
 }

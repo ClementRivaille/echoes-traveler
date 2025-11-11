@@ -5,7 +5,7 @@ import { Resources, sounds } from './resources';
 export default class Sounds {
   private players: { [key in Resources]?: Player } = {};
   private promises: Promise<void>[] = [];
-  constructor() {
+  constructor(private isMobile: boolean) {
     const gain = new Gain(1.3).toDestination();
     for (const soundRes of sounds.keys()) {
       this.promises.push(
@@ -28,7 +28,7 @@ export default class Sounds {
   play(res: Resources) {
     const sound = this.players[res];
     if (sound) {
-      sound.start(nowWithoutDelay());
+      sound.start(this.isMobile ? nowWithoutDelay() : undefined);
     }
   }
 }

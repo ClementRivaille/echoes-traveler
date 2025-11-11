@@ -109,4 +109,8 @@ export default class MobileUI {
       })
     );
   }
+
+  isActive(): boolean {
+    return this.active;
+  }
 }
