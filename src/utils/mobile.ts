@@ -13,7 +13,8 @@ export class TouchInput {
   private pointers: Phaser.Input.Pointer[];
 
   constructor(private game: Phaser.Scene) {
-    while (!isDefined(game.input.pointer1) || !isDefined(game.input.pointer2)) {
+    game.input.addPointer();
+    if (!isDefined(game.input.pointer2)) {
       game.input.addPointer();
     }
     this.pointers = [game.input.pointer1, game.input.pointer2];
