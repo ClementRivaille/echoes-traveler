@@ -69,10 +69,10 @@ export default class UI {
     });
     this.pressStart.setShadow(-5, 5, '#00000022', 2);
     this.subdialog = this.initText(0, 300, 'Better played with headphones!', {
-      fontSize: '32px',
+      fontSize: '38px',
     });
     this.subdialog.setShadow(-2, 2, '#00000022', 2);
-    this.subdialog.setAlpha(0.4);
+    this.subdialog.setAlpha(0.6);
 
     this.top = this.initText(0, -320, '', DIALOG_STYLE);
     this.top.setShadow(-6, 6, '#00000022', 2);

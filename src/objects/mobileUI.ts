@@ -11,11 +11,19 @@ const MARGIN = 35;
 const INACTIVE_ALPHA = 0.3;
 const ACTIVE_ALPHA = 0.8;
 
+const GRADIENT_BORDER = 'GRADIENT_BORDER';
+const GRADIENT_BORDER_HEIGHT = MOBILE_TOUCH_MARGIN - 20;
+
 export default class MobileUI {
   private leftSprite: Phaser.GameObjects.Sprite;
   private rightSprite: Phaser.GameObjects.Sprite;
   private upSprite: Phaser.GameObjects.Sprite;
   private downSprite: Phaser.GameObjects.Sprite;
+
+  private leftGradient: Phaser.GameObjects.Sprite;
+  private rightGradient: Phaser.GameObjects.Sprite;
+  private upGradient: Phaser.GameObjects.Sprite;
+  private downGradient: Phaser.GameObjects.Sprite;
 
   private active = false;
 
@@ -52,22 +60,63 @@ export default class MobileUI {
         sprite.setAlpha(0);
       }
     );
+
+    this.generateGradientTexture();
+    this.downGradient = this.game.add.sprite(
+      0,
+      this.game.renderer.height / 2 - GRADIENT_BORDER_HEIGHT / 2,
+      GRADIENT_BORDER
+    );
+    this.upGradient = this.game.add.sprite(
+      0,
+      -this.game.renderer.height / 2 + GRADIENT_BORDER_HEIGHT / 2,
+      GRADIENT_BORDER
+    );
+    this.leftGradient = this.game.add.sprite(
+      -this.game.renderer.width / 2 + GRADIENT_BORDER_HEIGHT / 2,
+      0,
+      GRADIENT_BORDER
+    );
+    this.rightGradient = this.game.add.sprite(
+      this.game.renderer.width / 2 - GRADIENT_BORDER_HEIGHT / 2,
+      0,
+      GRADIENT_BORDER
+    );
+
+    this.upGradient.setFlipY(true);
+    this.leftGradient.setRotation(Math.PI / 2);
+    this.rightGradient.setRotation(-Math.PI / 2);
+
+    [
+      this.downGradient,
+      this.upGradient,
+      this.rightGradient,
+      this.leftGradient,
+    ].forEach((sprite) => {
+      sprite.setDepth(MOBILE_UI_DEPTH - 1);
+      sprite.setAlpha(0);
+    });
   }
 
   update() {
     if (this.active) {
       const input = this.touchInput.readTouchDirections();
-      this.updateArrow(this.upSprite, input.up);
-      this.updateArrow(this.downSprite, input.down);
-      this.updateArrow(this.leftSprite, input.left);
-      this.updateArrow(this.rightSprite, input.right);
+      this.updateArrow(this.upSprite, this.upGradient, input.up);
+      this.updateArrow(this.downSprite, this.downGradient, input.down);
+      this.updateArrow(this.leftSprite, this.leftGradient, input.left);
+      this.updateArrow(this.rightSprite, this.rightGradient, input.right);
     }
   }
 
-  updateArrow(sprite: Phaser.GameObjects.Sprite, active: boolean) {
+  updateArrow(
+    sprite: Phaser.GameObjects.Sprite,
+    gradient: Phaser.GameObjects.Sprite,
+    active: boolean
+  ) {
     const targetAlpha = active ? ACTIVE_ALPHA : INACTIVE_ALPHA;
     if (sprite.alpha !== targetAlpha) {
       sprite.setAlpha(targetAlpha);
+      gradient.setAlpha(active ? 1 : 0);
     }
   }
 
@@ -95,6 +144,14 @@ export default class MobileUI {
         sprite.setAlpha(INACTIVE_ALPHA);
       }
     );
+    [
+      this.downGradient,
+      this.leftGradient,
+      this.upGradient,
+      this.rightGradient,
+    ].forEach((sprite) => {
+      sprite.setAlpha(0);
+    });
     await promisifyTween(
       this.game.tweens.add({
         targets: [
@@ -112,5 +169,22 @@ export default class MobileUI {
 
   isActive(): boolean {
     return this.active;
+  }
+
+  private generateGradientTexture() {
+    const texture = this.game.textures.createCanvas(
+      GRADIENT_BORDER,
+      this.game.renderer.width,
+      GRADIENT_BORDER_HEIGHT
+    );
+    const ctx = texture.context;
+    const gradient = ctx.createLinearGradient(0, 0, 0, GRADIENT_BORDER_HEIGHT);
+    gradient.addColorStop(0, '#ffffff00');
+    gradient.addColorStop(1, '#ffffff2a');
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, this.game.renderer.width, GRADIENT_BORDER_HEIGHT);
+
+    texture.refresh();
   }
 }
